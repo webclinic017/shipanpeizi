@@ -209,15 +209,15 @@ class _IndexPage extends State<IndexPage>{
         title: Text("首页"),
       ),
       BottomNavigationBarItem(
-        activeIcon: Icon(IconData(0xe66c, fontFamily: 'iconfont'),color: Colors.blueAccent),
+        activeIcon: Icon(const IconData(0xe66c, fontFamily: 'iconfont'),color: Colors.blueAccent),
         backgroundColor: Colors.black,
-        icon: Icon(IconData(0xe66c, fontFamily: 'iconfont')),
+        icon: Icon(const IconData(0xe66c, fontFamily: 'iconfont')),
         title: Text("行情"),
       ),
       BottomNavigationBarItem(
-        activeIcon: Icon(IconData(0xe60d, fontFamily: 'iconfont'),color: Colors.blueAccent,),
+        activeIcon: Icon(const IconData(0xe60d, fontFamily: 'iconfont'),color: Colors.blueAccent,),
         backgroundColor: Colors.black,
-        icon: Icon(IconData(0xe60d, fontFamily: 'iconfont')),
+        icon: Icon(const IconData(0xe60d, fontFamily: 'iconfont')),
         title: Text("合约"),
       ),
       BottomNavigationBarItem(

@@ -599,8 +599,12 @@ class _stock extends State<stock>{
                         direction:Axis.vertical,
                         spacing: 3,
                         children: <Widget>[
-                          Icon(
-                            IconData(is_check==false?0xe621:0xe610, fontFamily: 'iconfont'),
+                          this.is_check==false? Icon(//0xe610
+                           const IconData(0xe621, fontFamily: 'iconfont'),
+                            size:22,
+                            color: Colors.yellow,
+                          ):Icon(//0xe610
+                            const IconData(0xe610, fontFamily: 'iconfont'),
                             size:22,
                             color: Colors.yellow,
                           ),
