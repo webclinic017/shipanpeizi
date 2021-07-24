@@ -89,7 +89,7 @@ class BotomeMenumPageState extends State<IndexPageBack>{
         highlightColor: Color.fromRGBO(255,255,255,.05),   //点击高亮颜色
         splashColor: Color.fromRGBO(255,255,255,.05),    //水波纹样式
       ),
-      title: '中钥国际',
+      title: '盈满资管',
       home: Scaffold(
         body: PageView(
           physics: NeverScrollableScrollPhysics(),
