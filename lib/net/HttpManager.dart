@@ -22,8 +22,8 @@ class HttpManager {
     if (null == _dio) {
       _dio = new Dio(
           new BaseOptions(baseUrl: Address.BASE_URL, connectTimeout: 15000));
-      _dio.interceptors.add(new DioLogInterceptor());
-      _dio.interceptors.add(new PrettyDioLogger());
+      //_dio.interceptors.add(new DioLogInterceptor());
+      //_dio.interceptors.add(new PrettyDioLogger());
       _dio.interceptors.add(new ResponseInterceptors());
     }
   }
@@ -55,16 +55,18 @@ class HttpManager {
   }
 
   ///通用的GET请求
-  get(api, {params, withLoading = true}) async {
+  get(api, {params, withLoading = true,msg="加载中",no_header = true}) async {
 
     if (withLoading) {
-      LoadingUtils.show();
+      LoadingUtils.show(msg);
     }
 
     Response response;
     try {
       var token = await TokenStore().getToken("token");
-      _dio.options.headers = {'flag':'frontend','Authorization':token};
+
+        _dio.options.headers = {'flag':'frontend','Authorization':token};
+
       response = await _dio.get(api, queryParameters: params);
       if (withLoading) {
         LoadingUtils.dismiss();
@@ -84,16 +86,19 @@ class HttpManager {
   }
 
   ///通用的POST请求
-  post(api, {params, withLoading = true}) async {
+  post(api, {params, withLoading = true,msg="加载中",no_header = true}) async {
     if (withLoading) {
-      LoadingUtils.show();
+      LoadingUtils.show(msg);
     }
 
     Response response;
 
     try {
       var token = await TokenStore().getToken("token");
-      _dio.options.headers = {'flag':'frontend','Authorization':token};
+
+        _dio.options.headers = {'flag':'frontend','Authorization':token};
+
+
       response = await _dio.post(api, data: params);
       if (withLoading) {
         LoadingUtils.dismiss();

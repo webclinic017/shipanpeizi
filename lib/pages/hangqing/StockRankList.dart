@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/material_header.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
+import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
 
 import '../stock.dart';
@@ -15,7 +17,7 @@ class StockRankList extends StatefulWidget {
   _StockRankList createState() => _StockRankList();
 }
 
-class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientMixin{
+class _StockRankList extends State<StockRankList>{
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
@@ -28,6 +30,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
   double screenwidth;
   List<TextStyle> ts = [TextStyle()];
   Future _future;
+  Timer timer_;
   @override
   void initState() {
     super.initState();
@@ -61,8 +64,25 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
         "bg_color": Colors.white
       }
     ];
+    bool is_trade = Util().checkStockTradeTime();
+    if(is_trade){
+      timer_ = Timer.periodic(Duration(seconds: 5), (t){
+        try{
+          getDaPanData();
+        }catch(Exception){
+        }
+      });
+    }
+
+  }
+  @override
+  void dispose() {
+  if(timer_ != null){
+    timer_.cancel();
   }
 
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -91,6 +111,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
                     child: ListView(
                       children: <Widget>[
                         Container(
+
                           width: double.infinity,
                           child: Wrap(
                             alignment: WrapAlignment.spaceAround,
@@ -105,7 +126,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
                   Container(
                     padding: EdgeInsets.only(left: 15,right: 15),
                     child: Wrap(
-                      runSpacing: 10,
+
                       children: getTableRowList(),
                     ),
                   )
@@ -203,6 +224,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
           child: Material(
             color: Colors.white,
             child: Ink(
+
               child: InkWell(
                 splashColor: Colors.black26,
                 onTap:() {
@@ -214,6 +236,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
+                      padding: EdgeInsets.only(top: 7,bottom: 7),
                       width: screenwidth,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -280,6 +303,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
+                  padding: EdgeInsets.only(bottom: 10),
                   width: screenwidth,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -289,11 +313,7 @@ class _StockRankList extends State<StockRankList> with AutomaticKeepAliveClientM
                     ],
                   ),
                 ),
-
-
-
                 Container(
-
                   child: Text("涨跌幅"),
                 ),
               ],

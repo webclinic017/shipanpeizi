@@ -10,16 +10,16 @@ import 'package:flutterapp2/net/ResultData.dart';
 import 'package:flutterapp2/utils/EventDioLog.dart';
 import 'package:flutterapp2/utils/InputDioLog.dart';
 import 'package:flutterapp2/utils/Toast.dart';
-class ValidContract extends StatefulWidget {
+class HistoryContract extends StatefulWidget {
   String _title;
 
-  ValidContract(this._title);
+  HistoryContract(this._title);
 
   @override
-  _ValidContract createState() => _ValidContract();
+  _HistoryContract createState() => _HistoryContract();
 }
 
-class _ValidContract extends State<ValidContract>
+class _HistoryContract extends State<HistoryContract>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -29,7 +29,7 @@ class _ValidContract extends State<ValidContract>
   bool hasMore = true; //判断有没有数据
   List<String> addStr = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
   List<String> str = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-  GlobalKey<EasyRefreshState> _easyRefreshKey = GlobalKey<EasyRefreshState>();
+
 
   @override
   void initState() {
@@ -40,9 +40,8 @@ class _ValidContract extends State<ValidContract>
 
   Future _getListData() async {
     if (this.hasMore) {
-     ResultData res = await HttpManager.getInstance().get("frontend/selectMemberHeYueByCase",params: {"apply_state":1},withLoading: false);
+     ResultData res = await HttpManager.getInstance().get("frontend/selectHistoryHeYue",params: {"apply_state":4},withLoading: false);
       List arr = res.data;
-
       setState(() {
         this._list = res.data;
 //        if (this._page == 1) {
@@ -75,7 +74,6 @@ class _ValidContract extends State<ValidContract>
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
             if (snapshot.hasError) {
-
               return Center(
                 child: Text('网络请求出错'),
               );
@@ -87,7 +85,7 @@ class _ValidContract extends State<ValidContract>
                 ),
                 refreshFooter: MaterialFooter(key: null),
                 child: ListView.builder(
-                  itemCount: _list != null? _list.length:0,
+                  itemCount: _list.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                         child: Card(
@@ -121,114 +119,9 @@ class _ValidContract extends State<ValidContract>
                                     ),
                                   ],
                                 ),
-                                PopupMenuButton<String>(
-                                    initialValue: "",
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: 10,
-                                          right: 10,
-                                          top: 2,
-                                          bottom: 2),
-                                      decoration:
-                                          BoxDecoration(color: Colors.red),
-                                      child: Text(
-                                        "操作",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ),
-                                    onSelected: (String string) {
-                                     if(string == "1"){
-                                       //追加保证金
-                                      InputDioLog("追加保证金","3",context,(e) async{
-                                        if(e != null && e != ''){
-                                          if(double.parse(e)>0){
-                                           ResultData res = await HttpManager.getInstance().post("frontend/addDeposit",params: {"id":_list[index]['id'],"deposit":e},withLoading: false);
-                                           if(res.code != 200){
-                                             Toast.toast(context,msg: res.msg);
-                                             return;
-                                           }else{
-                                             Toast.toast(context,msg: '操作成功');
-                                             _getListData();
-                                             Navigator.pop(context);
-                                           }
-                                          }
-                                        }
-
-                                      }).showDioLog();
-                                     }
-                                     if(string == "2"){
-                                       //关闭合约
-                                     EventDioLog("提示","确认关闭合约吗",context,()async{
-                                       ResultData res = await HttpManager.getInstance().post("frontend/closeHeYue",params: {"id":_list[index]['id']},withLoading: false);
-
-                                       if(res.code != 200){
-                                         Toast.toast(context,msg: res.msg);
-                                         return;
-                                       }else{
-                                         Toast.toast(context,msg: '操作成功');
-                                         _getListData();
-                                         Navigator.pop(context);
-                                       }
-                                     }).showDioLog();
-                                     }
-                                     if(string == "3"){
-                                       //关闭合约
-                                       EventDioLog("提示","确认提盈吗",context,()async{
-                                         ResultData res = await HttpManager.getInstance().post("frontend/pickHeYueProfit",params: {"id":_list[index]['id']},withLoading: false);
-
-                                         if(res.code != 200){
-                                           Toast.toast(context,msg: res.msg);
-                                           return;
-                                         }else{
-                                           Toast.toast(context,msg: '操作成功');
-                                           _getListData();
-                                           Navigator.pop(context);
-                                         }
-                                       }).showDioLog();
-                                     }
-                                     if(string == "4"){
-                                       //追加保证金
-                                       InputDioLog("扩大合约","3",context,(e) async{
-                                         if(e != null && e != ''){
-                                           if(double.parse(e)>0){
-                                             ResultData res = await HttpManager.getInstance().post("frontend/expandHeYue",params: {"id":_list[index]['id'],"amount":double.parse(e)},withLoading: false);
-                                             if(res.code != 200){
-                                               Toast.toast(context,msg: res.msg);
-                                               return;
-                                             }else{
-                                               Toast.toast(context,msg: '操作成功');
-                                               _getListData();
-                                               Navigator.pop(context);
-                                             }
-                                           }
-                                         }
-
-                                       }).showDioLog();
-                                     }
-                                    },
-                                    itemBuilder: (BuildContext context) =>
-                                        <PopupMenuItem<String>>[
-                                          PopupMenuItem(
-                                            child: Text("追加保证金"),
-                                            value: "1",
-                                          ),
-                                          PopupMenuItem(
-                                            child: Text("关闭合约"),
-                                            value: "2",
-                                          ),
-                                          PopupMenuItem(
-                                            child: Text("合约提盈"),
-                                            value: "3",
-                                          ),
-                                          PopupMenuItem(
-                                            child: Text("扩大合约"),
-                                            value: "4",
-                                          )
-                                        ])
+                                Container(
+                                  child: Text(_list[index]['apply_state'] == 2?"已过期":_list[index]['apply_state']==3?"已拒绝":"已关闭"),
+                                )
                               ],
                             )
                           ],

@@ -1,558 +1,542 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterapp2/net/Address.dart';
+import 'package:flutterapp2/net/HttpManager.dart';
+import 'package:flutterapp2/net/ResultData.dart';
+import 'package:flutterapp2/pages/ChildItemView.dart';
 import 'package:flutterapp2/pages/heyue/applyHeYue.dart';
+import 'package:flutterapp2/pages/introduction.dart';
+import 'package:flutterapp2/pages/rule.dart';
 import 'package:flutterapp2/pages/searchStock.dart';
+import 'package:flutterapp2/pages/trade/trade.dart';
+import 'package:flutterapp2/utils/EventDioLog.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
+import 'package:flutterapp2/utils/NumUtil.dart';
+import 'package:flutterapp2/utils/Rute.dart';
+import 'package:flutterapp2/utils/Toast.dart';
+import 'package:flutterapp2/utils/Util.dart';
+import 'package:flutterapp2/utils/request.dart';
 
+import '../main.dart';
+import 'Mine.dart';
+import 'hangqing.dart';
+import 'heyue.dart';
+import 'news.dart';
 import 'order/order.dart';
 class IndexPage extends StatefulWidget {
+  Function fun;
+  IndexPage({this.fun});
   @override
   _IndexPage createState() => _IndexPage();
 }
 
-class _IndexPage extends State<IndexPage> with AutomaticKeepAliveClientMixin{
+class _IndexPage extends State<IndexPage>{
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    getDaPanData();
+    controller = new PageController(initialPage: this.page);
+    bool is_trade = Util().checkStockTradeTime();
+    getRankList();
+    if(is_trade){
+      timer_ = Timer.periodic(Duration(seconds: 5), (t){
+        try{
+          getDaPanData();
+        }catch(Exception){
+        }
+      });
+    }
+  }
+  @override
+  void dispose() {
+    if(timer_ != null){
+      timer_.cancel();
+    }
+    super.dispose();
   }
   final SystemUiOverlayStyle _style =SystemUiOverlayStyle(statusBarColor: Colors.transparent);
 
-  @override
-  bool get wantKeepAlive => true;
   List img_url = [
-    "https://peizi-2.oss-accelerate.aliyuncs.com/1588219664581image_2020_04_30T04_05_50_199Z.png?Expires=3788006400&OSSAccessKeyId=LTAI4Fi415FQnA2BE3JUnrwA&Signature=lkWJi7hJ6NMHje1KXt1qNQOaOe8%3D",
-    "https://peizi-2.oss-accelerate.aliyuncs.com/15844081814292.png?Expires=3788006400&OSSAccessKeyId=LTAI4Fi415FQnA2BE3JUnrwA&Signature=ymMEuH%2F9rBiWlAPAnZTUT5BLQM8%3D",
-    "https://peizi-2.oss-accelerate.aliyuncs.com/15844081821324.png?Expires=3788006400&OSSAccessKeyId=LTAI4Fi415FQnA2BE3JUnrwA&Signature=r6V02%2Bv%2FNY9RPwrLQPJMXeaPsN0%3D",
-    "https://peizi-2.oss-accelerate.aliyuncs.com/15844081810541.png?Expires=3788006400&OSSAccessKeyId=LTAI4Fi415FQnA2BE3JUnrwA&Signature=EViy1v95ZTEAyPYSjdSJq3Jh3uA%3D"
+    "img/nav1.png",
+    "img/nav2.png",
+    "img/nav3.png",
+    "img/nav4.png"
   ];
   List texts = [
-    {"name": "上证指数", "value": "2268.1 2.1%"},
-    {"name": "深圳成指", "value": "5123.3 24.1%"}
+    {"name": "上证指数", "value": "","rate":"","color":Colors.black},
+    {"name": "深圳成指", "value": "","rate":"","color":Colors.black},
+    {"name": "创业板指", "value": "","rate":"","color":Colors.black}
   ];
   double appBarAlpha = 0;
+  Timer timer_;
+  int page = 0;
+  List list = [];
+  PageController controller;
+  getRankList()async{
+   ResultData data = await HttpManager.getInstance().get("frontend/getRankList",withLoading: false,no_header: false);
+    setState(() {
+     list = data.data;
+   });
+  }
+  Future<void> onTap(int index) async {
+    if(page != index){
+      controller.jumpToPage(index);
+    }
+  }
+  Future getDaPanData() async {
+    try {
+      String result;
+      result = await request().getDaPanData();
+      Map parseJson = json.decode(result);
+      Map data = json.decode(parseJson["data"]["data"]);
+      List list = data["showapi_res_body"]["indexList"];
+      int i = 0;
+      list.forEach((element) {
+        setState(() {
+          if (double.parse(element["diff_rate"]) > 0.00) {
+            texts[i]["color"] = Color(0xffE63A3C);
+            texts[i]["rate"] = "+" + element["diff_rate"] + "%";
 
+          } else {
+            texts[i]["color"] = Color(0xff09B971);
+            texts[i]["rate"] = element["diff_rate"] + "%";
+
+          }
+          texts[i]["value"] = element["nowPrice"];
+        });
+        if (i > 2) {
+          return;
+        }
+        i++;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+  getTableList(){
+
+    List<TableRow> d = [];
+  d.add(TableRow(
+    //第一行样式 添加背景色
+      children: [
+        //增加行高
+        SizedBox(
+          height: 30.0,
+          child: Text(
+            '用户|合约',
+            style: TextStyle(
+                color: Color(0xff959ca7),
+                fontWeight: FontWeight.w100),
+          ),
+        ),
+
+        Text(
+          '盈利额(万)',
+          style: TextStyle(
+              color: Color(0xff959ca7),
+              fontWeight: FontWeight.w100),
+        ),
+        Text(
+          '盈利率',
+          style: TextStyle(
+              color: Color(0xff959ca7),
+              fontWeight: FontWeight.w100),
+        ),
+      ]));
+    if(list != null)
+    list.forEach((element) {
+      Color cur_color = Colors.black;
+     double rate = NumUtil.divide(element["profit"], element["deposit"]);
+     rate = NumUtil.getNumByValueDouble(rate, 2);
+     rate = rate * 100;
+     if(rate >0){
+       cur_color = Colors.red;
+     }else if(rate < 0){
+       cur_color = Colors.green;
+     }
+      d.add(TableRow(
+          children: [
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.start,
+              direction: Axis.vertical,
+              children: <Widget>[
+                Text(
+                  element["member"]["username"].toString().replaceRange(3, 7, "*"*4),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
+                Padding(child: Text(element["heyue"]["name"].toString()+element["leverage"]["name"].toStringAsFixed(0)+"倍",
+                    style: TextStyle(
+
+                      color: Color(0xff959ca7),
+                    )),padding: EdgeInsets.only(bottom: 10),)
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Text(NumUtil.getNumByValueDouble(element["profit"], 2).toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Text(rate.toString()+"%",
+                  style: TextStyle(
+                      color: cur_color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
+            ),
+          ]));
+    });
+    return d;
+  }
+  int flag = 1;
   @override
   Widget build(BuildContext context) {
+    final List<BottomNavigationBarItem> bottomNavItems = [
+      BottomNavigationBarItem(
+        activeIcon: Icon(Icons.home,color: Colors.blueAccent),
+        backgroundColor: Colors.black,
+        icon: Icon(Icons.home),
+        title: Text("首页"),
+      ),
+      BottomNavigationBarItem(
+        activeIcon: Icon(IconData(0xe66c, fontFamily: 'iconfont'),color: Colors.blueAccent),
+        backgroundColor: Colors.black,
+        icon: Icon(IconData(0xe66c, fontFamily: 'iconfont')),
+        title: Text("行情"),
+      ),
+      BottomNavigationBarItem(
+        activeIcon: Icon(IconData(0xe60d, fontFamily: 'iconfont'),color: Colors.blueAccent,),
+        backgroundColor: Colors.black,
+        icon: Icon(IconData(0xe60d, fontFamily: 'iconfont')),
+        title: Text("合约"),
+      ),
+      BottomNavigationBarItem(
+        activeIcon: Icon(Icons.person,color: Colors.blueAccent,),
+        backgroundColor: Colors.black,
+        icon: Icon(Icons.person),
+        title: Text("我的"),
+      ),
+    ];
     SystemChrome.setSystemUIOverlayStyle(_style);
     return Scaffold(
-      body: Stack(
+      bottomNavigationBar: BottomNavigationBar(
+
+
+            selectedFontSize:12.0,           //选中时的大小
+            unselectedFontSize:12.0,      //未选中时的大小
+            type: BottomNavigationBarType.fixed,  //固定导航栏颜色
+            items: bottomNavItems,
+            onTap: onTap,
+            currentIndex: page
+        ),
+      body: PageView(
         children: <Widget>[
-          MediaQuery.removePadding(
-              removeTop: true,
-              context: context,
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification sn) {
-                  if (sn is ScrollNotification && sn.depth == 0) {
-                    double alpha = sn.metrics.pixels / 100;
-                    if (alpha < 0) {
-                      alpha = 0;
-                    } else if (alpha > 1) {
-                      alpha = 1;
-                    }
-                    setState(() {
-                      appBarAlpha = alpha;
-                    });
-                  }
-                },
-                child: Scaffold(
-                  body: Center(
-                    child: ListView(
-                      children: <Widget>[
-                        Container(
-                          height: 240,
-                          child: Swiper(
-                            itemCount: img_url.length,
-                            autoplay: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Image.network(
-                                img_url[index],
-                                fit: BoxFit.fill,
-                              );
-                            },
-                            pagination: SwiperPagination(
-                                alignment: Alignment.bottomRight,
-                                margin: EdgeInsets.only(right: 15),
-                                builder: DotSwiperPaginationBuilder(
-                                    color: Color.fromRGBO(200, 200, 200, 0.5),
-                                    size: 8.0,
-                                    activeSize: 10.0)),
-                          ),
-                        ),
-                        Container(
-                          color: Colors.black,
-                          child: Container(
-                            padding: EdgeInsets.all(15),
-                            child: Wrap(
-                              alignment: WrapAlignment.center,
-                              spacing: 45,
-                              runSpacing: 20,
-                              children: <Widget>[
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/1.png",
-                                          width: 45,
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          "自选股",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: (){
-                                    JumpAnimation().jump(order(), context);
+          FlutterEasyLoading(
+            child: Stack(
+              children: <Widget>[
+                MediaQuery.removePadding(
+                    removeTop: true,
+                    context: context,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification sn) {
+                        if (sn is ScrollNotification && sn.depth == 0) {
+                          double alpha = sn.metrics.pixels / 100;
+                          if (alpha < 0) {
+                            alpha = 0;
+                          } else if (alpha > 1) {
+                            alpha = 1;
+                          }
+                          setState(() {
+                            appBarAlpha = alpha;
+                          });
+                        }
+                      },
+                      child: Scaffold(
+                        body: Center(
+                          child: ListView(
+                            children: <Widget>[
+                              Container(
+                                height: 240,
+                                child: Swiper(
+                                  itemCount: img_url.length,
+                                  autoplay: true,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Image.asset(img_url[index],fit: BoxFit.fill,);
                                   },
-                                  child: Container(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          child: Image.asset(
-                                            "img/2.png",
-                                            width: 45,
+                                  pagination: SwiperPagination(
+                                      alignment: Alignment.bottomRight,
+                                      margin: EdgeInsets.only(right: 15),
+                                      builder: DotSwiperPaginationBuilder(
+                                          color: Color.fromRGBO(200, 200, 200, 0.5),
+                                          size: 8.0,
+                                          activeSize: 10.0)),
+                                ),
+                              ),
+                              Container(
+                                color: Colors.black,
+                                child: Container(
+                                  padding: EdgeInsets.all(15),
+                                  child: Wrap(
+                                    alignment: WrapAlignment.center,
+                                    spacing: 45,
+                                    runSpacing: 20,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: (){
+                                          JumpAnimation().jump(news(), context);
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Image.asset(
+                                                  "img/1.png",
+                                                  width: 45,
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text(
+                                                  "7x24快讯",
+                                                  style: TextStyle(fontSize: 12),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Container(
-                                          child: Text("持仓",
-                                              style: TextStyle(fontSize: 12)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/3.png",
-                                          width: 45,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          JumpAnimation().jump(trade("null"), context);
+                                          return;
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Image.asset(
+                                                  "img/2.png",
+                                                  width: 45,
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text("持仓",
+                                                    style: TextStyle(fontSize: 12)),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                      Container(
-                                        child: Text("代理中心",
-                                            style: TextStyle(fontSize: 12)),
+
+                                      GestureDetector(
+                                        onTap: (){
+                                          controller.jumpToPage(1);
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Image.asset(
+                                                  "img/4.png",
+                                                  width: 45,
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text("行情",
+                                                    style: TextStyle(fontSize: 12)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
+
+                                      GestureDetector(
+                                        onTap: (){
+                                          JumpAnimation().jump(rule(), context);
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Image.asset(
+                                                  "img/6.png",
+                                                  width: 45,
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text("交易规则",
+                                                    style: TextStyle(fontSize: 12)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
                                     ],
                                   ),
-                                ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/4.png",
-                                          width: 45,
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text("自选股",
-                                            style: TextStyle(fontSize: 12)),
-                                      ),
-                                    ],
+                                  decoration: BoxDecoration(
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                    // 边框，
+                                    // border: Border.all(color: Colors.yellowAccent, style: BorderStyle.solid, width: 2),
+                                    // 背景图
+
+                                    // 边框圆角
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10)),
                                   ),
                                 ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/5.png",
-                                          width: 45,
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text("充值返现",
-                                            style: TextStyle(fontSize: 12)),
-                                      ),
-                                    ],
-                                  ),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  JumpAnimation().jump(applyHeYue(), context);
+                                },
+                                child: Container(
+                                    child: Image.asset(
+                                      "img/heyue.png",
+                                      fit: BoxFit.fill,
+                                    )),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(7),
+                                child: Text(
+                                  "昨日-收益榜",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/6.png",
-                                          width: 45,
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text("自选股",
-                                            style: TextStyle(fontSize: 12)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/7.png",
-                                          width: 45,
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text("公司介绍",
-                                            style: TextStyle(fontSize: 12)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Image.asset(
-                                          "img/8.png",
-                                          width: 45,
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text("在线客服",
-                                            style: TextStyle(fontSize: 12)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color.fromRGBO(255, 255, 255, 1),
-                              // 边框，
-                              // border: Border.all(color: Colors.yellowAccent, style: BorderStyle.solid, width: 2),
-                              // 背景图
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(15),
 
-                              // 边框圆角
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10)),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: (){
-                            JumpAnimation().jump(applyHeYue(), context);
-                          },
-                          child: Container(
-                              child: Image.asset(
-                                "img/heyue.png",
-                                fit: BoxFit.fill,
-                              )),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(7),
-                          child: Text(
-                            "昨日-收益榜",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(15),
+                                child: Table(
 
-                          child: Table(
-
-                            columnWidths: const {
-                              0: FixedColumnWidth(180.0),
-                              1: FixedColumnWidth(80.0),
-                              2: FixedColumnWidth(60.0),
-                            },
-                            children: [
-
-                              TableRow(
-                                  //第一行样式 添加背景色
-                                  children: [
-                                    //增加行高
-                                    SizedBox(
-                                      height: 30.0,
-                                      child: Text(
-                                        '用户|合约',
-                                        style: TextStyle(
-                                            color: Color(0xff959ca7),
-                                            fontWeight: FontWeight.w100),
-                                      ),
-                                    ),
-
-                                    Text(
-                                      '盈利额(万)',
-                                      style: TextStyle(
-                                          color: Color(0xff959ca7),
-                                          fontWeight: FontWeight.w100),
-                                    ),
-                                    Text(
-                                      '盈利率',
-                                      style: TextStyle(
-                                          color: Color(0xff959ca7),
-                                          fontWeight: FontWeight.w100),
-                                    ),
-                                  ]),
-
-                              TableRow(
-                                  children: [
-                                Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.start,
-                                  direction: Axis.vertical,
-                                  children: <Widget>[
-                                    Text(
-                                      '138****2911',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
-                                    Padding(child: Text('按天10倍',
-                                        style: TextStyle(
-
-                                          color: Color(0xff959ca7),
-                                        )),padding: EdgeInsets.only(bottom: 10),)
-                                  ],
+                                  columnWidths: const {
+                                    0: FixedColumnWidth(180.0),
+                                    1: FixedColumnWidth(80.0),
+                                    2: FixedColumnWidth(60.0),
+                                  },
+                                  children: getTableList(),
                                 ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("79.21",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("9.33%",
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                              ]),
-                              TableRow(children: [
-//
-                                Wrap(
-                                  direction: Axis.vertical,
-                                  children: <Widget>[
-                                    Text(
-                                      '138****2911',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
-                                    Padding(child: Text('按天10倍',
-                                        style: TextStyle(
-
-                                          color: Color(0xff959ca7),
-                                        )),padding: EdgeInsets.only(bottom: 10),),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("79.21",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("9.33%",
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                              ]),
-                              TableRow(children: [
-//                                    SizedBox(
-//                                      height: 40.0,
-//                                      child: Column(
-//                                        crossAxisAlignment: CrossAxisAlignment.values[0],
-//                                        children: <Widget>[
-//                                          Container(child: Text("138****1213"),),
-//                                          Container(child: Text("按天10倍"),)
-//                                        ],
-//                                      ),
-//                                    ),
-                                Wrap(
-                                  spacing: 5,
-                                  direction: Axis.vertical,
-                                  children: <Widget>[
-                                    Text(
-                                      '138****2911',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
-                                    Padding(child: Text('按天10倍',
-                                        style: TextStyle(
-
-                                          color: Color(0xff959ca7),
-                                        )),padding: EdgeInsets.only(bottom: 10),),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("79.21",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("9.33%",
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                              ]),
-                              TableRow(children: [
-//                                    SizedBox(
-//                                      height: 40.0,
-//                                      child: Column(
-//                                        crossAxisAlignment: CrossAxisAlignment.values[0],
-//                                        children: <Widget>[
-//                                          Container(child: Text("138****1213"),),
-//                                          Container(child: Text("按天10倍"),)
-//                                        ],
-//                                      ),
-//                                    ),
-                                Wrap(
-                                  spacing: 5,
-                                  direction: Axis.vertical,
-                                  children: <Widget>[
-                                    Text(
-                                      '138****2911',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
-                                    Padding(child: Text('按天10倍',
-                                        style: TextStyle(
-
-                                          color: Color(0xff959ca7),
-                                        )),padding: EdgeInsets.only(bottom: 10),),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("79.21",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Text("9.33%",
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                ),
-                              ])
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              )),
-          Opacity(
-            opacity: appBarAlpha,
-            child: Container(
-              height: 80,
-              decoration: BoxDecoration(color: Color(0xFF515151)),
-            ),
-          ),
-          Positioned(
-            top: 30,
-            left: 15,
-            child: Center(
-                child: Wrap(
-              spacing: 40,
-              children: <Widget>[
-                Container(
-                  width: 100,
-                  height: 80,
-                  child: Swiper(
-                    itemCount: 2,
-                    scrollDirection: Axis.vertical,
-                    autoplay: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(bottom: 7),
-                              child: Text(
-                                texts[index]["name"],
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
-                            ),
-                            Container(
-                              child: Text(texts[index]["value"],
-                                  style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                    margin: EdgeInsets.only(top: 8),
-                    width: 190,
-                    height: 30,
-                    child: Container(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(left: 10),
-                            child: Icon(
-                              Icons.search,
-                              color: Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: (){
-                              JumpAnimation().jump(searchStock(), context);
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              child: Text(
-                                "输入股票名称/代码",
-                                style: TextStyle(
-                                    color: Color.fromRGBO(255, 255, 255, 0.3)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(255, 255, 255, 0.3),
-                        // 边框，
-                        //border: Border.all(color: Colors.yellowAccent, style: BorderStyle.solid, width: 2),
-                        // 背景图
-
-                        // 边框圆角
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        // 子 weight
                       ),
                     )),
+                Opacity(
+                  opacity: appBarAlpha,
+                  child: Container(
+                    height: 80,
+                    decoration: BoxDecoration(color: Color(0xFF515151)),
+                  ),
+                ),
+                Positioned(
+                  top: 37,
+                  left: 15,
+                  child: Center(
+                      child: Wrap(
+                        spacing: 40,
+                        children: <Widget>[
+                          Container(
+                            width: 120,
+                            height: 80,
+                            child: Swiper(
+                              itemCount: 2,
+                              scrollDirection: Axis.vertical,
+                              autoplay: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                        child: Text(
+                                          texts[index]["name"],
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 16),
+                                        ),
+                                      ),
+                                      Container(
+                                        child: Text(texts[index]["value"]+" "+texts[index]["rate"],
+                                            style: TextStyle(color: texts[index]["color"])),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Container(
+                              padding: EdgeInsets.only(right: 10),
+                              margin: EdgeInsets.only(top: 8),
+                              width: 190,
+                              height: 30,
+                              child: Container(
+
+                                child: Row(
+
+                                  children: <Widget>[
+                                    Container(
+
+                                      margin: EdgeInsets.only(left: 10),
+                                      child: Icon(
+                                        Icons.search,
+                                        color: Color.fromRGBO(255, 255, 255, 0.3),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: (){
+                                        JumpAnimation().jump(searchStock(), context);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          "输入股票名称/代码",
+                                          style: TextStyle(
+                                              color: Color.fromRGBO(255, 255, 255, 0.3)),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(255, 255, 255, 0.3),
+                                  // 边框，
+                                  //border: Border.all(color: Colors.yellowAccent, style: BorderStyle.solid, width: 2),
+                                  // 背景图
+
+                                  // 边框圆角
+                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                  // 子 weight
+                                ),
+                              )),
+                        ],
+                      )),
+                ),
               ],
-            )),
+            ),
           ),
+          hangqing(index: 0),
+          heyue(),
+          Mine()
         ],
+        controller: controller,
+        onPageChanged: onPageChanged,
       ),
     );
+  }
+  void onPageChanged(int page) {
+    setState(() {
+      this.page = page;
+    });
   }
 }

@@ -39,6 +39,11 @@ dependencies:
   shared_preferences: ^0.5.8
   transparent_image: ^1.0.0
   flutter_screenutil: ^0.4.2
+  webview_flutter: ^0.3.20
+  flutter_html: ^1.0.0
+  package_info: ^0.4.3
+  web_socket_channel: ^1.1.0
+  url_launcher: ^5.4.7
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +84,14 @@ flutter:
     - img/daili.png
     - img/fanyong.png
     - img/arrow.png
+    - img/nav1.png
+    - img/nav2.png
+    - img/nav3.png
+    - img/nav4.png
+    - img/poster.png
+    - img/logo.png
+    - img/yl.jpg
+    - img/yl.png
     - assets/kline.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

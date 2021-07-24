@@ -10,12 +10,15 @@ import 'package:flutterapp2/net/HttpManager.dart';
 import 'package:flutterapp2/net/ResultData.dart';
 import 'package:flutterapp2/pages/IndexPage.dart';
 import 'package:flutterapp2/pages/Mine.dart';
+import 'package:flutterapp2/pages/indexPageBack.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
-import 'package:flutterapp2/utils/Router.dart';
+import 'package:flutterapp2/utils/Rute.dart';
 import 'package:flutterapp2/utils/Toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
+import 'Register.dart';
+
 class Login extends StatefulWidget{
 
 
@@ -146,6 +149,9 @@ class Login_ extends State<Login>{
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       GestureDetector(
+                        onTap: (){
+                          JumpAnimation().jump(Register(), context);
+                        },
                         child: Text("账号注册"),
 
                       ),
@@ -171,13 +177,13 @@ class Login_ extends State<Login>{
                       Toast.toast(context,msg: "请输入完整信息");
                       return;
                     }
-                    ResultData result = await HttpManager.getInstance().post(Address.BASE_URL+"login",params: {"username":phone,"password":password},withLoading: true);
+                    ResultData result = await HttpManager.getInstance().post(Address.BASE_URL+"login",params: {"username":phone,"password":password},withLoading: true,no_header: false);
                     if(result.code == 200){
                       String token = result.data;
 
                       TokenStore().setToken("token",token);
                       TokenStore().setToken("is_login","1");
-                      Navigator.pop(context);
+                      JumpAnimation().jump(IndexPage(), context);
                       //成功
                     }else if(result.code == 407){
                       Toast.toast(context,msg: "账户已被禁用");

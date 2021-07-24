@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -5,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/material_header.dart';
+import 'package:flutterapp2/net/HttpManager.dart';
+import 'package:flutterapp2/net/ResultData.dart';
 import 'package:flutterapp2/pages/stock.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
+import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
 
 
@@ -29,6 +33,7 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
   double screenwidth;
   List<TextStyle> ts = [TextStyle()];
   Future _future;
+  Timer timer_;
   @override
   void initState() {
     super.initState();
@@ -36,9 +41,23 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
 
 
     _future = getRankList();
+    bool is_trade = Util().checkStockTradeTime();
+    if(is_trade){
+      timer_ = Timer.periodic(Duration(seconds: 5,), (t){
+        try{
+          getRankList();
+        }catch(Exception){
+        }
+      });
+    }
 
   }
+  @override
+  void dispose() {
 
+    timer_.cancel();
+
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -70,7 +89,7 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
                         Container(
                           padding: EdgeInsets.only(left: 15,right: 15),
                           child: Wrap(
-                            runSpacing: 10,
+
                             children: getTableRowList(),
                           ),
                         )
@@ -102,18 +121,41 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
 
   List<Container> getTableRowList(){
     int i = 0;
-    rank_list.forEach((element) {
-      Color cur_color ;
-      String diff_rate;
-      if(element["diff_rate"]>0.00){
-        cur_color = Colors.red;
-        diff_rate = "+"+element["diff_rate"].toString();
-      }else{
-        cur_color = Color(0xff09B971);
-        diff_rate = element["diff_rate"].toString();
-      }
+    table_list = [];
+    table_list.add(Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(bottom: 10),
+            width: screenwidth,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text("名称代码"),
+                Text("最新价格"),
+              ],
+            ),
+          ),
+          Container(
+            child: Text("涨跌幅"),
+          ),
+        ],
+      ),
+    ));
 
-      if(i>5){
+    if(rank_list != null){
+      rank_list.forEach((element) {
+
+        Color cur_color ;
+        String diff_rate;
+        if(double.parse(element["diff_rate"])>0.00){
+          cur_color = Colors.red;
+          diff_rate = "+"+element["diff_rate"].toString();
+        }else{
+          cur_color = Color(0xff09B971);
+          diff_rate = element["diff_rate"].toString();
+        }
         table_list.add(Container(
 
           child: Material(
@@ -123,13 +165,14 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
                 splashColor: Colors.black26,
                 onTap:() {
 
-                  JumpAnimation().jump(stock(element["code"].toString()), context);
+                  JumpAnimation().jump(stock(element["market"]+element["code"].toString()), context);
                 },
                 child: Row(
 
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
+                      padding: EdgeInsets.only(top: 7,bottom: 7),
                       width: screenwidth,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,24 +218,20 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
             ),
           ),
         ));
-      }
-      i++;
-    });
+      });
+    }
+
     return table_list;
   }
   Future getRankList() async {
     try{
-      String result;
-      result = await  request().send_get("/stock/getRankList/"+page_.toString());
-      Map parseJson = json.decode(result);
-      Map dat1 = json.decode(parseJson["data"]["data"]);
-      List list = dat1["showapi_res_body"]["data"]["list"];
+     ResultData res = await HttpManager.getInstance().get("stock/get_my_optional",withLoading: false);
+      Map dat1 = res.data["data1"];
+      List list = dat1["showapi_res_body"]["list"];
       setState(() {
-        if(page_ == 1){
           rank_list = list;
           table_list.add(Container(
             child: Row(
-
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
@@ -205,20 +244,12 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
                     ],
                   ),
                 ),
-
-
-
                 Container(
-
                   child: Text("涨跌幅"),
                 ),
               ],
             ),
           ));
-        }else{
-          rank_list.addAll(list);
-        }
-
       });
     }catch(e){
       print(e);

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,8 @@ import 'package:flutterapp2/net/HttpManager.dart';
 import 'package:flutterapp2/net/ResultData.dart';
 import 'package:flutterapp2/pages/trade/trade.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
-import 'package:flutterapp2/utils/Router.dart';
+import 'package:flutterapp2/utils/Rute.dart';
+import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_k_chart/entity/k_line_entity.dart';
@@ -17,12 +20,14 @@ import 'package:flutter_k_chart/k_chart_widget.dart';
 import 'package:flutter_k_chart/utils/data_util.dart';
 class stock extends StatefulWidget{
   String stock_id;
+
   stock(this.stock_id);
   @override
   _stock createState() => _stock();
 
 }
 class _stock extends State<stock>{
+
   bool is_check = false;
   List<KLineEntity> datas;
   bool isLine = true;
@@ -79,7 +84,9 @@ class _stock extends State<stock>{
   List stock_detail ;
   List wudang = [];
   List detail = [];
+  String defaul_flag = "1";
   PageController controller;
+  Timer timer_;
   void initState(){
     super.initState();
     cur_index =0;
@@ -115,18 +122,56 @@ class _stock extends State<stock>{
       {"text": "买4", "price": "0", "number": "0"},
       {"text": "买5", "price": "0", "number": "0"},
     ];
-    getData("1",0);
+    getData(defaul_flag,0);
     getTradeData();
     getIsOptional();
-  }
+    bool is_trade = Util().checkStockTradeTime();
+    if(is_trade){
+      timer_ = Timer.periodic(Duration(seconds: 5), (t){
+        try{
 
+
+          getTradeData();
+          getNowPrice();
+        }catch(Exception){
+        }
+      });
+    }
+  }
+  //default_stock_flag
+  getNowPrice()async{
+    String result;
+    result = await  request().getIPAddress("1",widget.stock_id.toString());
+   Map parseJson = json.decode(result);
+   Map data1 = json.decode(parseJson["data"]["data1"]);
+   Map map1 = data1["showapi_res_body"]["list"][0];
+    setState(() {
+    KLineEntity s = datas[datas.length-1];
+    defalut_diff_money = map1["diff_money"];
+    defalut_diff_rate = map1["diff_rate"]+"%";
+    defalut_price = map1["nowPrice"].toString();
+    s.close = double.parse(map1["nowPrice"]);
+   });
+  }
   getIsOptional() async {
    ResultData res =  await HttpManager.getInstance().get("stock/get_is_optional",params: {"stock_code":widget.stock_id},withLoading: false);
-   if(res.data>0){
-     setState(() {
-       is_check = true;
-     });
+
+   if(res.data != null){
+     if(res.data>0){
+       setState(() {
+         is_check = true;
+       });
+     }
    }
+
+  }
+  @override
+  void dispose() {
+    if(timer_ != null){
+      timer_.cancel();
+    }
+
+    super.dispose();
   }
   guTransToShou(String gu) {
     int a = int.parse(gu);
@@ -134,6 +179,7 @@ class _stock extends State<stock>{
     return b.toString();
   }
   Future getTradeData() async {
+
     try {
       String result;
       result = await request().send_get('/stock/getTradeData/'+widget.stock_id);
@@ -145,7 +191,10 @@ class _stock extends State<stock>{
       List list1 = dat2["showapi_res_body"]["list"];
 
       setState(() {
-        detail = list1;
+        if(list1 != null){
+          detail = list1;
+        }
+
         default_stock_flag = map1["market"];
         default_name = map1["name"];
 
@@ -515,8 +564,6 @@ class _stock extends State<stock>{
                margin: EdgeInsets.only(bottom: 60),
 
              ),
-
-
               ],
             ),
             Positioned(
@@ -566,11 +613,12 @@ class _stock extends State<stock>{
                       onTap: () async {
                         var is_login = await TokenStore().getToken("is_login");
                         if(is_login == null || is_login == "0"){
-                          Router.navigatorKey.currentState.pushNamedAndRemoveUntil("/login",
+                          Rute.navigatorKey.currentState.pushNamedAndRemoveUntil("/login",
                               ModalRoute.withName("/"));
                           return;
                         }
-                        JumpAnimation().jump(trade(widget.stock_id), context);
+
+                        JumpAnimation().jump(trade(default_stock_flag+widget.stock_id), context);
                       },
                       child: Container(
 
@@ -627,6 +675,7 @@ class _stock extends State<stock>{
              onTap: (){
                setState(() {
                  showLoading = true;
+                 defaul_flag = k_cate[e]["time"];
                });
                    getData(k_cate[e]["time"],e);
              },
@@ -645,6 +694,7 @@ class _stock extends State<stock>{
   }
   void getData(String period,int e) async {
     String result;
+
     try {
 
       result = await  request().getIPAddress('$period',widget.stock_id.toString());
@@ -665,20 +715,21 @@ class _stock extends State<stock>{
       }else{
         list = data["showapi_res_body"]["dataList"];
       }
-      list.forEach((element) {
-        String time = '';
 
-        element["amount"] = 7628.590000000000000000;
-        element["count"] = 7628.590000000000000000;
-        if(period == "1"){
+      if(list != null){
+        list.forEach((element) {
+          String time = '';
 
-          var time_ = element["time"].toString();
-          element["detail_time"] = element["time"].toString();
-          element["open"] = 7628.590000000000000000;
-          element["low"] = 7628.590000000000000000;
-          element["high"] = 7628.590000000000000000;
-          element["volume"] = num.parse(element["volume"]);
-          element["nowPrice"] = num.parse(element["nowPrice"]);
+          element["amount"] = 7628.590000000000000000;
+          element["count"] = 7628.590000000000000000;
+          if(period == "1"){
+            var time_ = element["time"].toString();
+            element["detail_time"] = element["time"].toString();
+            element["open"] = 0.3;//万维易源没有开盘价随便写个0.3
+            element["low"] = 7628.590000000000000000;
+            element["high"] = 7628.590000000000000000;
+            element["volume"] = num.parse(element["volume"]);
+            element["nowPrice"] = num.parse(element["nowPrice"]);
             String str1 = time_.substring(0,1);
             String str2 = time_.substring(1,2);
             String str3 = time_.substring(2,3);
@@ -686,40 +737,41 @@ class _stock extends State<stock>{
             time = str1+str2+":"+str3+str4;
             element["time"] = time;
 
-        }else{
-          var o = 201611181500;
-
-          if(period == "5" || period == "30"){
-            var time_ = element["minute"].toString();
-            String str1 = time_.substring(8,10);
-            String str2 = ":";
-            String str3 = time_.substring(10,12);
-            time = str1+str2+str3;
-            element["detail_time"] = element["minute"].toString();
           }else{
-            var time_ = element["time"].toString();
-            element["detail_time"] = element["time"].toString();
-            String str1 = time_.substring(0,4);
-            String str2 = "-";
-            String str3 = time_.substring(4,6);
-            time = str1+str2+str3;
+            var o = 201611181500;
+            if(period == "5" || period == "30"){
+              var time_ = element["minute"].toString();
+              String str1 = time_.substring(8,10);
+              String str2 = ":";
+              String str3 = time_.substring(10,12);
+              time = str1+str2+str3;
+              element["detail_time"] = element["minute"].toString();
+            }else{
+              var time_ = element["time"].toString();
+              element["detail_time"] = element["time"].toString();
+              String str1 = time_.substring(0,4);
+              String str2 = "-";
+              String str3 = time_.substring(4,6);
+              time = str1+str2+str3;
+            }
+
+            element["open"] = num.parse(element["open"]);
+            element["nowPrice"] = num.parse(element["close"]);
+            element["low"] = num.parse(element["min"]);
+            element["high"] = num.parse(element["max"]);
+            element["time"] = time;
+            element["volume"] = num.parse(element["volumn"]);
           }
+        });
+        if(period == "1"){
+          datas = list.map((item) => KLineEntity.fromJson(item)).toList().toList().cast<KLineEntity>();
 
-          element["open"] = num.parse(element["open"]);
-          element["nowPrice"] = num.parse(element["close"]);
-          element["low"] = num.parse(element["min"]);
-          element["high"] = num.parse(element["max"]);
-          element["time"] = time;
-          element["volume"] = num.parse(element["volumn"]);
+        }else{
+          datas = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>();
+
         }
-      });
-      if(period == "1"){
-        datas = list.map((item) => KLineEntity.fromJson(item)).toList().toList().cast<KLineEntity>();
-
-      }else{
-        datas = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>();
-
       }
+
       DataUtil.calculate(datas);
       showLoading = false;
       setState(() {
@@ -747,7 +799,7 @@ class _stock extends State<stock>{
             default_color = Color(0xff09B971);
           }
 
-          if(checkStockTradeTime()){
+          if(Util().checkStockTradeTime()){
             defalut_status = "交易中";
           }
           defalut_date = map1["date"]+" "+map1["time"];
@@ -791,6 +843,7 @@ class _stock extends State<stock>{
     }
   }
   checkStockTradeTime(){
+
    if(DateTime.now().weekday == 0 || DateTime.now().weekday == 6){
         return false;
    }

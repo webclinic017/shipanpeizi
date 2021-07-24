@@ -46,7 +46,7 @@ class searchStock_ extends State<searchStock>{
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: EdgeInsets.only(top: 25),
           padding: EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,6 +145,7 @@ class searchStock_ extends State<searchStock>{
                       Navigator.pop(context);
                     },
                     child: Container(
+                      padding: EdgeInsets.only(right: 5),
                       child: Text("取消"),
                     ),
                   )
@@ -214,51 +215,49 @@ class searchStock_ extends State<searchStock>{
     );
   }
 
-  List<GestureDetector> getStockList(){
+  List<MaterialButton> getStockList(){
 
     return stock_list.asMap().keys.map((e){
-      return GestureDetector(
-        onTap: () async {
-          Map map = {"code":stock_list[e]["code"].toString(),"name":stock_list[e]["name"].toString()};
-          String str = json.encode(map);
-         List sl = await TokenStore().getStringList("search_list") ;
+      return MaterialButton(onPressed: () async {
+        Map map = {"code":stock_list[e]["code"].toString(),"name":stock_list[e]["name"].toString()};
+        String str = json.encode(map);
+        List sl = await TokenStore().getStringList("search_list") ;
 
-         if(sl == null){
-           List<String> lst = [];
-           lst.add(str);
-           TokenStore().setStringList("search_list", lst);
+        if(sl == null){
+          List<String> lst = [];
+          lst.add(str);
+          TokenStore().setStringList("search_list", lst);
 
-         }else{
-           sl.add(str);
-           TokenStore().setStringList("search_list", sl);
-         }
-          getHistory();
-          JumpAnimation().jump(stock(stock_list[e]["code"].toString()), context);
-        },
-        child: Container(
-          padding: EdgeInsets.only(top: 5,bottom: 5),
-          child:  Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                  margin: EdgeInsets.only(bottom: 5),
-                  child: Text(stock_list[e]["name"],style: TextStyle(fontWeight: FontWeight.bold),)
-              ),
-              Row(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(right: 3),
-                    padding: EdgeInsets.only(top: 1,bottom: 1,left: 3,right: 3),
-                    decoration: BoxDecoration(color: Colors.red),
-                    child: Text(stock_list[e]["market"].toString().toUpperCase(),style: TextStyle(color: Colors.white,fontSize: 9),),
-                  ),
-                  Text(stock_list[e]["code"])
-                ],
-              )
-            ],
-          ),
+        }else{
+          sl.add(str);
+          TokenStore().setStringList("search_list", sl);
+        }
+        getHistory();
+        JumpAnimation().jump(stock(stock_list[e]["code"].toString()), context);
+      },child: Container(
+
+        padding: EdgeInsets.only(top: 5,bottom: 5),
+        child:  Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+                margin: EdgeInsets.only(bottom: 5),
+                child: Text(stock_list[e]["name"],style: TextStyle(fontWeight: FontWeight.bold),)
+            ),
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(right: 3),
+                  padding: EdgeInsets.only(top: 1,bottom: 1,left: 3,right: 3),
+                  decoration: BoxDecoration(color: Colors.red),
+                  child: Text(stock_list[e]["market"].toString().toUpperCase(),style: TextStyle(color: Colors.white,fontSize: 9),),
+                ),
+                Text(stock_list[e]["code"])
+              ],
+            )
+          ],
         ),
-      );
+      ),);
     }).toList();
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-class Router {
+class Rute {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 }
 

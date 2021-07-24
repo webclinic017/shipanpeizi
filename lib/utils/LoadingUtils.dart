@@ -4,7 +4,7 @@ bool loadingStatus = false;
 
 class LoadingUtils {
 
-  static show() {
+  static show(String msg) {
     EasyLoading.show();
   }
 

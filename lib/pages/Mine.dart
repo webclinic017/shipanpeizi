@@ -3,12 +3,22 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp2/SharedPreferences/TokenStore.dart';
+import 'package:flutterapp2/net/HttpManager.dart';
+import 'package:flutterapp2/net/ResultData.dart';
 import 'package:flutterapp2/pages/Login.dart';
+import 'package:flutterapp2/pages/agree.dart';
+import 'package:flutterapp2/pages/editCard.dart';
+import 'package:flutterapp2/pages/editPassword.dart';
+import 'package:flutterapp2/pages/recharge.dart';
+import 'package:flutterapp2/pages/share.dart';
 import 'package:flutterapp2/pages/stock.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterapp2/pages/withdraw.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
+import 'package:flutterapp2/utils/Toast.dart';
+import 'fund/fund.dart';
 import 'heyue.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 class Mine extends StatefulWidget {
   String _title;
   @override
@@ -22,21 +32,48 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
 
   Map user_info = new Map();
   Map user_message_cate = {
-    "account": "1000",
-    "validContract": "12",
-    "deposit": "12043.00"
+    "account": "0",
+    "validContract": "0",
+    "deposit": "0"
   };
+  String kefu = '';
   Map lang = {"account": "余额", "validContract": "有效合约", "deposit": "保证金"};
-  List list_cate = [{"name":"账户与安全","url":new Login()}, {"name":"实名与银行卡","url":new heyue()}, {"name":"通用设置","url":new heyue()}, {"name":"用户协议","url":new heyue()}, {"name":"关于","url":new stock("333")}];
+  List list_cate = [{"name":"银行卡管理","url":new editCard()}, {"name":"修改密码","url":new editPassword()}, {"name":"用户协议","url":new agree()}, {"name":"退出登录","url":new stock("333")}];
 
   @override
   void initState() {
     print("个人中心");
     super.initState();
-    user_info["img"] = "img/mine.jpg";
+    user_info["img"] = "img/logo.png";
     user_info["userName"] = "阿倪蛋糕店";
+    getMemberInfo();
+    getConfig();
   }
+  getConfig()async{
+    ResultData res = await HttpManager.getInstance().get("getConfig",withLoading: false);
+    List s = res.data;
+    setState(() {
+      s.forEach((element) {
 
+        if(element["en_name"] == "kefu"){
+          setState(() {
+            kefu = element["value"];
+          });
+        }
+
+      });
+    });
+  }
+  getMemberInfo()async{
+   ResultData data = await HttpManager.getInstance().get("member/getMemberInfo",withLoading: false);
+   Map a = data.data;
+   setState(() {
+     user_message_cate["account"] = a["amount"].toString();
+     user_message_cate["validContract"] = a["count"].toString();
+     user_message_cate["deposit"] = a["deposit"].toString();
+     user_info["userName"] = a["nickname"];
+   });
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(_style);
@@ -51,25 +88,26 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
         ),
         actions: <Widget>[
           IconButton(
+            alignment:Alignment.bottomLeft,
             icon: Icon(
               IconData(0xe61c, fontFamily: 'iconfont'),
               color: Colors.black,
             ),
             tooltip: "Alarm",
             onPressed: () {
-              print("Alarm");
+              launch("tel://$kefu");
             },
           ),
-          IconButton(
-            icon: Icon(
-              IconData(0xe615, fontFamily: 'iconfont'),
-              color: Colors.black,
-            ),
-            tooltip: "Home",
-            onPressed: () {
-              print("Home");
-            },
-          ),
+//          IconButton(
+//            icon: Icon(
+//              IconData(0xe615, fontFamily: 'iconfont'),
+//              color: Colors.black,
+//            ),
+//            tooltip: "Home",
+//            onPressed: () {
+//              print("Home");
+//            },
+//          ),
         ],
       ),
       body: MediaQuery.removePadding(context: context,
@@ -148,52 +186,75 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Image.asset(
-                          "img/recharge.png",
-                          width: 50,
-                        ),
-                        Text("充值")
-                      ],
+                    GestureDetector(
+                      onTap: () async {
+                        JumpAnimation().jump(recharge(), context);
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            "img/recharge.png",
+                            width: 50,
+                          ),
+                          Text("充值")
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        Image.asset(
-                          "img/withdraw.png",
-                          width: 50,
-                        ),
-                        Text("提现")
-                      ],
+                    GestureDetector(
+                      onTap: ()=>JumpAnimation().jump(withdraw(), context),
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            "img/withdraw.png",
+                            width: 50,
+                          ),
+                          Text("提现")
+                        ],
+                      ),
+                    ), //launch("tel://$kefu");
+                    GestureDetector(
+                      onTap: (){
+                        launch("tel://$kefu");
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            "img/daili.png",
+                            width: 50,
+                          ),
+                          Text("客服")
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        Image.asset(
-                          "img/daili.png",
-                          width: 50,
-                        ),
-                        Text("代理中心")
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Image.asset(
-                          "img/detail.png",
-                          width: 50,
-                        ),
-                        Text("资金明细")
-                      ],
+                    GestureDetector(
+                      onTap: (){
+                        JumpAnimation().jump(fund(), context);
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            "img/detail.png",
+                            width: 50,
+                          ),
+                          Text("资金明细")
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 10),
-            child: Image.asset(
-              "img/fanyong.png",
-              fit: BoxFit.fill,
+          GestureDetector(
+            onTap: (){
+              //JumpAnimation().jump(share(), context);
+            },
+            child: Container(
+              padding: EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 10),
+              child: Image.asset(
+                "img/fanyong.png",
+                fit: BoxFit.fill,
+              ),
             ),
           ),
           Container(
@@ -227,38 +288,77 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
 
   List getCate() {
     return list_cate.asMap().keys.map((e) {
-      return Column(
-        children: <Widget>[
-          InkWell(
-            splashColor: Colors.black26,
-            onTap:() {
-              JumpAnimation().jump(list_cate[e]['url'], context);
-              },
-            child:  Container(
+      if(e == list_cate.length -1){
+        return Column(
+          children: <Widget>[
+            InkWell(
+              splashColor: Colors.black26,
+              onTap:() async{
 
-              padding: EdgeInsets.all(15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(list_cate[e]["name"],style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
-                  Image.asset(
-                    "img/arrow.png",
-                    width: 7,
-                    color: Colors.black,
-                  )
-                ],
+                TokenStore().setToken("is_login","0");
+                TokenStore().setToken("token", "");
+
+               JumpAnimation().jump(Login(), context);
+              },
+              child:  Container(
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(list_cate[e]["name"],style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                    Image.asset(
+                      "img/arrow.png",
+                      width: 7,
+                      color: Colors.black,
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
 
-          Container(
+            Container(
 
-            decoration: BoxDecoration(
-                border: Border(
-                    top: BorderSide(color: Color(0xFFDCDCDC), width: 0.2))),
-          )
-        ],
-      );
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(color: Color(0xFFDCDCDC), width: 0.2))),
+            )
+          ],
+        );
+      }else{
+        return Column(
+          children: <Widget>[
+            InkWell(
+              splashColor: Colors.black26,
+              onTap:() {
+                JumpAnimation().jump(list_cate[e]['url'], context);
+              },
+              child:  Container(
+
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(list_cate[e]["name"],style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                    Image.asset(
+                      "img/arrow.png",
+                      width: 7,
+                      color: Colors.black,
+                    )
+                  ],
+                ),
+              ),
+            ),
+
+            Container(
+
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(color: Color(0xFFDCDCDC), width: 0.2))),
+            )
+          ],
+        );
+      }
+
     }).toList();
   }
   static SlideTransition createTransition(

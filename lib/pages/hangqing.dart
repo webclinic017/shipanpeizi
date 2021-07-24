@@ -5,10 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:flutter_k_chart/utils/data_util.dart';
 import 'package:flutterapp2/pages/hangqing/StockRankList.dart';
+import 'package:flutterapp2/pages/searchStock.dart';
+import 'package:flutterapp2/utils/JumpAnimation.dart';
 import 'package:flutterapp2/utils/request.dart';
 
 import 'ChildItemView.dart';
 class hangqing extends StatefulWidget{
+  Function fn;
+  hangqing({this.page,this.index});
+  int page =0;
+  int index = 0;
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -23,8 +29,11 @@ class hangqing_ extends State<hangqing>{
   @override
   void initState() {
     super.initState();
+    page = widget.page==2?1:0;
+    controller = new PageController(initialPage: widget.index);
 
   }
+
   TextStyle checked_text_style =
   TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold);
   TextStyle unchecked_text_style = null;
@@ -70,7 +79,12 @@ class hangqing_ extends State<hangqing>{
                       );
                     }).toList()
                 ),
-                Icon(Icons.search,size: 30)
+                GestureDetector(
+                  onTap: (){
+                    JumpAnimation().jump(searchStock(), context);
+                  },
+                  child: Icon(Icons.search,size: 30),
+                )
               ],
             ),
           ),
@@ -90,6 +104,7 @@ class hangqing_ extends State<hangqing>{
     );
   }
   void onPageChanged(int page) {
+
     setState(() {
       this.page = page;
     });

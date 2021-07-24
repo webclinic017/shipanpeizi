@@ -506,7 +506,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                   int heyue_id_ = heyue[cur_heyue_index]["id"];
                                                   int leverage_id_ = leverage[cur_leverage_index]["id"];
                                                   ResultData result = await HttpManager.getInstance().get(Address.BASE_URL+"frontend/applyHeYue",withLoading: true,params: {"deposit":cur_deposit,"heyue_id":heyue_id_,"leverage_id":leverage_id_});
-                                                  if(result.code == 507){
+                                                  if(result.code == 505){
                                                     Toast.toast(context,msg:"账户余额不足");
                                                   }else if(result.code == 500){
                                                     Toast.toast(context,msg:"申请失败");

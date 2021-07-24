@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:flutter_k_chart/utils/data_util.dart';
 import 'package:flutterapp2/pages/ChildItemView.dart';
+import 'package:flutterapp2/pages/HistoryContract.dart';
 import 'package:flutterapp2/pages/heyue/applyHeYue.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
 import 'ValidContract.dart';
@@ -173,7 +174,7 @@ List<Container> con = [];
               onPageChanged: onPageChanged,
               children: <Widget>[
                 ValidContract("3333"),
-                ChildItemView(),
+                HistoryContract("#33"),
               ],
             ),
           )
