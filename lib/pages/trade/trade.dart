@@ -409,7 +409,12 @@ List stock_list;
                                             }
                                             setState(() {
 
-                                              max_buy_stock_num =  my_heyue[int.parse(default_heyue)]["total_capital"]/cur_price;
+                                              if(my_heyue.length>0){
+                                                max_buy_stock_num =  my_heyue[int.parse(default_heyue)]["total_capital"]/cur_price;
+
+                                              }else{
+                                                max_buy_stock_num = 0;
+                                              }
                                             });
                                           }
                                           setState(() {
@@ -1444,7 +1449,12 @@ List stock_list;
           default_price = map1["nowPrice"];
           market_price = default_price;
           cur_price = double.parse(default_price);
-          max_buy_stock_num = my_heyue[int.parse(default_heyue)]["total_capital"]/cur_price;
+         if(my_heyue.length>0){
+           max_buy_stock_num = my_heyue[int.parse(default_heyue)]["total_capital"]/cur_price;
+
+         }else{
+           max_buy_stock_num = 0;
+         }
           if (Util().checkStockTradeTime()) {
             defalut_status = '交易中';
           }
