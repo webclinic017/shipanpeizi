@@ -132,15 +132,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
-  flutter_k_chart:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: b720786892685fa5d0765289ad49842e2e6348ce
-      url: "https://github.com/gwhcn/flutter_k_chart"
-    source: git
-    version: "0.1.0"
   flutter_page_indicator:
     dependency: transitive
     description:

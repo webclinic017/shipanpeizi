@@ -135,13 +135,6 @@
             </list>
           </value>
         </entry>
-        <entry key="flutter_k_chart">
-          <value>
-            <list>
-              <option value="D:/software/flutter/.pub-cache/git/flutter_k_chart-b720786892685fa5d0765289ad49842e2e6348ce/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="flutter_page_indicator">
           <value>
             <list>
@@ -551,7 +544,6 @@
       </option>
     </properties>
     <CLASSES>
-      <root url="file://D:/software/flutter/.pub-cache/git/flutter_k_chart-b720786892685fa5d0765289ad49842e2e6348ce/lib" />
       <root url="file://D:/software/flutter/.pub-cache/hosted/pub.flutter-io.cn/archive-2.0.13/lib" />
       <root url="file://D:/software/flutter/.pub-cache/hosted/pub.flutter-io.cn/args-1.6.0/lib" />
       <root url="file://D:/software/flutter/.pub-cache/hosted/pub.flutter-io.cn/async-2.4.1/lib" />

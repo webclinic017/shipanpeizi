@@ -15,9 +15,10 @@ import 'package:flutterapp2/utils/Rute.dart';
 import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_k_chart/entity/k_line_entity.dart';
-import 'package:flutter_k_chart/k_chart_widget.dart';
-import 'package:flutter_k_chart/utils/data_util.dart';
+import '../chart/entity/k_line_entity.dart';
+import '../chart/k_chart_widget.dart';
+import '../chart/utils/data_util.dart';
+
 class stock extends StatefulWidget{
   String stock_id;
 
@@ -767,17 +768,7 @@ class _stock extends State<stock>{
         });
 
         if(period == "1"){
-          list.forEach((element) {
-
-            double s = element["nowPrice"] as num;
-            if(s>0){
-              element["nowPrice"] = element["nowPrice"] as num;
-            }else{
-              element["nowPrice"] = 0;
-            }
-          });
           datas = list.map((item) => KLineEntity.fromJson(item)).toList().toList().cast<KLineEntity>();
-
         }else{
           datas = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>();
 

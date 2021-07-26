@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_k_chart/flutter_k_chart.dart';
-import 'package:flutter_k_chart/utils/data_util.dart';
+
 import 'package:flutterapp2/pages/hangqing/StockRankList.dart';
 import 'package:flutterapp2/pages/searchStock.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
