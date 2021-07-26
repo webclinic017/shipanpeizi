@@ -188,7 +188,7 @@ class Login_ extends State<Login>{
                       TokenStore().setToken("token",token);
                       TokenStore().setToken("is_login","1");
                       JumpAnimation().jump(IndexPage(), context);
-                      //成功
+                      //成功git
                     }else if(result.code == 407){
                       Toast.toast(context,msg: "账户已被禁用");
                     }else if(result.code == 406){

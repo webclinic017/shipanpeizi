@@ -230,9 +230,9 @@ class Login_ extends State<forgetPassword> {
 
                     ResultData result = await HttpManager.getInstance().post(
                         "member/register/forget_password",
-                        params: {"account": phone.toString(),"captcha":validate_code.toString(),"password":password.toString()},
+                        params: {"phone": phone.toString(),"captcha":validate_code.toString(),"password":password.toString()},
                         withLoading: true);
-
+                    print(result.data);
                     if (result.code == 200) {
                       Toast.toast(context, msg: "修改成功");
                       JumpAnimation().jump(Login(), context);
