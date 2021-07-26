@@ -38,11 +38,11 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
   };
   String kefu = '';
   Map lang = {"account": "余额", "validContract": "有效合约", "deposit": "保证金"};
-  List list_cate = [{"name":"银行卡管理","url":new editCard()}, {"name":"修改密码","url":new editPassword()}, {"name":"用户协议","url":new agree()}, {"name":"退出登录","url":new stock("333")}];
+  List list_cate = [{"name":"实名与银行卡","url":new editCard()}, {"name":"修改密码","url":new editPassword()}, {"name":"用户协议","url":new agree()}, {"name":"退出登录","url":new stock("333")}];
 
   @override
   void initState() {
-    print("个人中心");
+
     super.initState();
     user_info["img"] = "img/logo.png";
     user_info["userName"] = "阿倪蛋糕店";
@@ -66,7 +66,7 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
   }
   getMemberInfo()async{
    ResultData data = await HttpManager.getInstance().get("member/getMemberInfo",withLoading: false);
-   print(data.data);
+
     Map a = data.data;
    setState(() {
      user_message_cate["account"] = a["amount"].toString();

@@ -57,8 +57,8 @@ class editCard_ extends State<editCard> {
     phoneData = {
       "value": "",
       "title": "手机号码",
-      "tip": "请输入绑定关联手机号码",
-      "icon": Icon(Icons.phone_iphone),
+      "tip": "请输入身份证号码",
+      "icon": Icon(Icons.credit_card),
       "is_edit": false,
       "type":"number"
     };
@@ -149,14 +149,6 @@ class editCard_ extends State<editCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 IconInput(
-                  data: phoneData,
-                  callBack: (value) {
-                    setState(() {
-                      phoneData["value"] = value;
-                    });
-                  },
-                ),
-                IconInput(
                   data: realName,
                   callBack: (value) {
                     setState(() {
@@ -164,6 +156,15 @@ class editCard_ extends State<editCard> {
                     });
                   },
                 ),
+                IconInput(
+                  data: phoneData,
+                  callBack: (value) {
+                    setState(() {
+                      phoneData["value"] = value;
+                    });
+                  },
+                ),
+
 
                 IconInput(
                   data: bankName,

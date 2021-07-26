@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import 'Register.dart';
+import 'forgetPassword.dart';
 
 class Login extends StatefulWidget{
 
@@ -156,6 +157,9 @@ class Login_ extends State<Login>{
 
                       ),
                       GestureDetector(
+                        onTap: (){
+                          JumpAnimation().jump(forgetPassword(), context);
+                        },
                         child: Text("忘记密码"),
 
                       )

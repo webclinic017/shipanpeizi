@@ -31,7 +31,7 @@ class Register extends StatefulWidget{
 }
 
 class Register_ extends State<Register>{
-
+  static TextEditingController _controller = TextEditingController();
   String phone;
   String password;
   String verify_code;
@@ -46,6 +46,7 @@ class Register_ extends State<Register>{
   void initState() {
     // TODO: implement initState
     super.initState();
+    _controller.text = "";
     _commentFocus = FocusNode();
   }
   static bool checkExist(value) {
@@ -164,19 +165,7 @@ class Register_ extends State<Register>{
                               nickname = e;
                             });
                           },
-                          controller: TextEditingController
-                              .fromValue(TextEditingValue(
-                              text:
-                              '${this.nickname == null ? "" : this.nickname}',
-                              selection:
-                              TextSelection.fromPosition(
-                                  TextPosition(
-                                      affinity:
-                                      TextAffinity
-                                          .downstream,
-                                      offset:
-                                      '${this.nickname}'
-                                          .length)))),
+                          controller:  _controller,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(left: 10),
                             hintText: "输入昵称",
