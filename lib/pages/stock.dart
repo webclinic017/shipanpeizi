@@ -767,7 +767,15 @@ class _stock extends State<stock>{
         });
 
         if(period == "1"){
+          list.forEach((element) {
 
+            double s = element["nowPrice"] as num;
+            if(s>0){
+              element["nowPrice"] = element["nowPrice"] as num;
+            }else{
+              element["nowPrice"] = 0;
+            }
+          });
           datas = list.map((item) => KLineEntity.fromJson(item)).toList().toList().cast<KLineEntity>();
 
         }else{
