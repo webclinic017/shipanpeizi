@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 class request{
-  String url = "http://192.168.1.4:86";
-  //String url = "http://8.134.69.19:81";
+  //String url = "http://192.168.1.4:86";
+  String url = "http://8.134.69.19:81";
   request();
   Future<String>  getIPAddress(String period,String stock_code) async {
    String usrls;
