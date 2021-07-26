@@ -765,6 +765,7 @@ class _stock extends State<stock>{
             element["volume"] = num.parse(element["volumn"]);
           }
         });
+
         if(period == "1"){
 
           datas = list.map((item) => KLineEntity.fromJson(item)).toList().toList().cast<KLineEntity>();
