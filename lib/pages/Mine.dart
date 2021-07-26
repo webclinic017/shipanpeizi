@@ -66,7 +66,8 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
   }
   getMemberInfo()async{
    ResultData data = await HttpManager.getInstance().get("member/getMemberInfo",withLoading: false);
-   Map a = data.data;
+   print(data.data);
+    Map a = data.data;
    setState(() {
      user_message_cate["account"] = a["amount"].toString();
      user_message_cate["validContract"] = a["count"].toString();

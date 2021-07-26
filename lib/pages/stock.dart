@@ -129,8 +129,6 @@ class _stock extends State<stock>{
     if(is_trade){
       timer_ = Timer.periodic(Duration(seconds: 5), (t){
         try{
-
-
           getTradeData();
           getNowPrice();
         }catch(Exception){
@@ -768,6 +766,7 @@ class _stock extends State<stock>{
           }
         });
         if(period == "1"){
+
           datas = list.map((item) => KLineEntity.fromJson(item)).toList().toList().cast<KLineEntity>();
 
         }else{
