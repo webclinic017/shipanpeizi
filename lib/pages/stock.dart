@@ -169,7 +169,6 @@ class _stock extends State<stock>{
     if(timer_ != null){
       timer_.cancel();
     }
-
     super.dispose();
   }
   guTransToShou(String gu) {

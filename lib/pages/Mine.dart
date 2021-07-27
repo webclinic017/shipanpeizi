@@ -25,9 +25,7 @@ class Mine extends StatefulWidget {
   _Mine createState() => _Mine();
 }
 
-class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _Mine extends State<Mine>{
   final SystemUiOverlayStyle _style =SystemUiOverlayStyle(statusBarColor: Colors.transparent);
 
   Map user_info = new Map();
@@ -45,7 +43,7 @@ class _Mine extends State<Mine> with AutomaticKeepAliveClientMixin {
 
     super.initState();
     user_info["img"] = "img/logo.png";
-    user_info["userName"] = "阿倪蛋糕店";
+    user_info["userName"] = "";
     getMemberInfo();
     getConfig();
   }

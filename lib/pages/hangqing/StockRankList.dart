@@ -20,7 +20,7 @@ class StockRankList extends StatefulWidget {
 class _StockRankList extends State<StockRankList>{
   @override
   // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+
   List<Container> table_list = [];
   List dapan_data;
   List<String> containers = ["沪深", "自选"];

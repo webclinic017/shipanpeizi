@@ -14,9 +14,8 @@ class heyue extends StatefulWidget {
   }
 }
 
-class heyue_ extends State<heyue> with SingleTickerProviderStateMixin ,AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class heyue_ extends State<heyue>{
+
   PageController controller;
   int page = 0;
 

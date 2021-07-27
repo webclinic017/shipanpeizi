@@ -19,23 +19,21 @@ class HistoryContract extends StatefulWidget {
   _HistoryContract createState() => _HistoryContract();
 }
 
-class _HistoryContract extends State<HistoryContract>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _HistoryContract extends State<HistoryContract> {
+
   Future _future;
-  List _list = [];
+  List _list;
   int _page = 1;
   bool hasMore = true; //判断有没有数据
   List<String> addStr = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
   List<String> str = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _future = this._getListData();
+    _list = [];
   }
 
   Future _getListData() async {
@@ -85,7 +83,7 @@ class _HistoryContract extends State<HistoryContract>
                 ),
                 refreshFooter: MaterialFooter(key: null),
                 child: ListView.builder(
-                  itemCount: _list.length,
+                  itemCount:_list != null?  _list.length:0,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                         child: Card(

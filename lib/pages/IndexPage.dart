@@ -64,7 +64,6 @@ class _IndexPage extends State<IndexPage>{
 
   List img_url = [
     "img/nav1.png",
-    "img/nav2.png",
     "img/nav3.png",
     "img/nav4.png"
   ];

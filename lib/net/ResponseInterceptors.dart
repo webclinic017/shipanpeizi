@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutterapp2/SharedPreferences/TokenStore.dart';
+import 'package:flutterapp2/pages/ChildItemView.dart';
 import 'package:flutterapp2/pages/Login.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
 import 'package:flutterapp2/utils/Rute.dart';
@@ -30,8 +31,11 @@ class ResponseInterceptors extends InterceptorsWrapper {
         }else if(code == 506 || code == 501){
 
               TokenStore().setToken("is_login", "0");
+
+
               Rute.navigatorKey.currentState.pushNamedAndRemoveUntil("/login",
               ModalRoute.withName("/"));
+
         } else {
           return new ResultData(response.data["data"], false,code, response.data["msg"]);
         }

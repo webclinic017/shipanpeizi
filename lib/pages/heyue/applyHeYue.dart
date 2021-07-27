@@ -367,7 +367,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                     Text("亏损平仓线"),
                                                     GestureDetector(
                                                       onTap: (){
-                                                        TipDioLog("亏损平仓线","亏损平仓线=保证金×20.0%+配资资金",context).showDioLog();
+                                                        TipDioLog("亏损平仓线","亏损平仓线=保证金×30.0%+配资资金",context).showDioLog();
                                                       },
                                                       child: Icon(
                                                         IconData(0xe602, fontFamily: 'iconfont'),
@@ -691,7 +691,8 @@ class applyHeYue_ extends State<applyHeYue>{
  getDeposit() async {
     ResultData result = await HttpManager.getInstance().get(Address.BASE_URL+"frontend/getHeYueLeverage",withLoading: false);
    if(result.data != null){
-     List hy = result.data["validHeYueIdList"];
+
+      List hy = result.data["validHeYueIdList"];
      List lr = result.data["validLeverageIdList"];
      double amount_ = result.data["amount"];
 

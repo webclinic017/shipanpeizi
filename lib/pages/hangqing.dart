@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ class hangqing extends StatefulWidget{
   hangqing({this.page,this.index});
   int page =0;
   int index = 0;
+  Timer t;
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -24,6 +26,7 @@ class hangqing extends StatefulWidget{
 class hangqing_ extends State<hangqing>{
   List<String> containers = ["沪深","自选"];
   int page = 0;
+
   List<TextStyle> ts = [TextStyle()];
   @override
   void initState() {

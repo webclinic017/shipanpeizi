@@ -9,6 +9,7 @@ import 'package:flutterapp2/net/HttpManager.dart';
 import 'package:flutterapp2/net/ResultData.dart';
 import 'package:flutterapp2/utils/EventDioLog.dart';
 import 'package:flutterapp2/utils/InputDioLog.dart';
+import 'package:flutterapp2/utils/NumUtil.dart';
 import 'package:flutterapp2/utils/Toast.dart';
 class ValidContract extends StatefulWidget {
   String _title;
@@ -19,10 +20,9 @@ class ValidContract extends StatefulWidget {
   _ValidContract createState() => _ValidContract();
 }
 
-class _ValidContract extends State<ValidContract>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _ValidContract extends State<ValidContract> {
+
+
   Future _future;
   List _list = [];
   int _page = 1;
@@ -114,6 +114,24 @@ class _ValidContract extends State<ValidContract>
                                       child: Text(
                                           "操盘余额:    " +
                                               _list[index]['total_capital'].toString(),
+                                          style: TextStyle(
+                                              color: Colors.blueGrey,
+                                              fontSize: 13)),
+                                      margin: EdgeInsets.only(top: 5),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                          "合约市值:    " +
+                                              _list[index]['order_sum'].toString(),
+                                          style: TextStyle(
+                                              color: Colors.blueGrey,
+                                              fontSize: 13)),
+                                      margin: EdgeInsets.only(top: 5),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                          "合约资产:    " +
+                                              NumUtil.add(_list[index]['order_sum'], _list[index]['total_capital']).toString(),
                                           style: TextStyle(
                                               color: Colors.blueGrey,
                                               fontSize: 13)),

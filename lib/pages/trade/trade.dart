@@ -47,6 +47,7 @@ class _trade extends State<trade> {
   Color default_color = Colors.black;
   String search_code;
   String market_price;
+  double input_price;
   String number = "0";
   double screenwidth;
   int cur_index = 0;
@@ -455,6 +456,7 @@ List stock_list;
                                     setState(() {
                                       if(e == '2'){
                                         cur_price = double.parse(default_price);
+                                        input_price = double.parse(default_price);
                                         market_price = '市价';
                                         is_readOnly = true;
                                         if(my_heyue.length>0){
@@ -464,6 +466,7 @@ List stock_list;
                                       }else{
                                         market_price = default_price;
                                         cur_price = double.parse(market_price);
+                                        input_price = double.parse(market_price);
                                         trade_amount = double.parse(number)*cur_price;
                                         is_readOnly = false;
                                       }
@@ -473,22 +476,6 @@ List stock_list;
                                   }),
                                 ),
 
-                                Container(
-                                  width: ScreenUtil().setWidth(200),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        "涨停: 12.18",
-                                        style: TextStyle(fontSize: 11),
-                                      ),
-                                      Text(
-                                        "跌停: 9.96",
-                                        style: TextStyle(fontSize: 11),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 Container(
                                   margin: EdgeInsets.only(top: 10),
                                   width: ScreenUtil().setWidth(200),
@@ -519,12 +506,13 @@ List stock_list;
                                                 setState(() {
                                                   market_price = e;
                                                   cur_price = double.parse(market_price);
+                                                  input_price = double.parse(market_price);
                                                 });
                                               },
                                               controller: TextEditingController
                                                   .fromValue(TextEditingValue(
                                                   text:
-                                                  '${this.market_price == null ? "" : this.market_price}',
+                                                  '${this.input_price == null ? "" : this.input_price}',
                                                   selection:
                                                   TextSelection.fromPosition(
                                                       TextPosition(
@@ -532,7 +520,7 @@ List stock_list;
                                                           TextAffinity
                                                               .downstream,
                                                           offset:
-                                                          '${this.market_price}'
+                                                          '${this.input_price}'
                                                               .length)))),
 
                                               /// 设置字体
@@ -583,6 +571,7 @@ List stock_list;
                                                       market_price = (double.parse(market_price)-0.01).toStringAsFixed(2);
 
                                                       cur_price = double.parse(market_price);
+                                                      input_price = double.parse(market_price);
 
                                                       if(my_heyue.length>0){
                                                         if(cur_page ==0){
@@ -607,8 +596,7 @@ List stock_list;
                                                     if(market_price != null && double.parse(market_price) > 0){
                                                       market_price = (double.parse(market_price)+0.01).toStringAsFixed(2);
                                                       cur_price = double.parse(market_price);
-
-
+                                                      input_price = double.parse(market_price);
                                                       if(my_heyue.length>0){
                                                         if(cur_page ==0){
                                                           max_buy_stock_num = my_heyue[int.parse(default_heyue)]["total_capital"]/cur_price;
@@ -891,7 +879,7 @@ List stock_list;
                                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                               children: <Widget>[
                                                                 Text("价格"),
-                                                                Text(cur_price.toString(),style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red)),
+                                                                Text(input_price!=null?input_price.toString():cur_price.toString(),style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red)),
                                                               ],
                                                             ),
                                                             Row(
@@ -950,7 +938,13 @@ List stock_list;
                                                                   int member_heyue_id = my_heyue[int.parse(default_heyue)]["id"];
                                                                   String stock_code = default_stock_flag+default_code;
                                                                   String stock_name = default_name;
-                                                                  double buy_price = cur_price;
+                                                                  double buy_price;
+                                                                  if(input_price == null){
+                                                                   buy_price = cur_price;
+                                                                  }else{
+                                                                   buy_price = input_price;
+                                                                  }
+
                                                                   int trade_direction = cur_page==0?1:2;
                                                                   int buy_hand = int.parse(number);
                                                                   int entrust_way = int.parse(default_weituo_way);
@@ -1086,6 +1080,7 @@ List stock_list;
                                                         setState(() {
                                                           market_price = wudang[e]["price"];
                                                           cur_price = double.parse(wudang[e]["price"]);
+                                                          input_price = double.parse(wudang[e]["price"]);
                                                         });
                                                       }
                                                     },
@@ -1428,8 +1423,6 @@ List stock_list;
   Future getTradeData() async {
 
     if(widget.stock_code != "null"){
-
-
         String result;
         result = await request().send_get('/stock/getTradeData/'+widget.stock_code);
         Map parseJson = json.decode(result);
@@ -1444,7 +1437,7 @@ List stock_list;
           default_stock_flag = map1["market"];
           default_name = map1["name"];
           default_code = map1["code"];
-          search_code = default_code;
+        // search_code = default_code;
           defalut_date = map1["date"] + " " + map1["time"];
           default_price = map1["nowPrice"];
           market_price = default_price;

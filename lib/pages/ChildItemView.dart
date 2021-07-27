@@ -14,16 +14,17 @@ import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
 
 
-
+final GlobalKey<_ChildItemView> childkey = GlobalKey();
 class ChildItemView extends StatefulWidget {
+
+  ChildItemView();
   @override
   _ChildItemView createState() => _ChildItemView();
 }
 
-class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientMixin{
+class _ChildItemView extends State<ChildItemView>{
   @override
   // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
   List<Container> table_list = [];
   List dapan_data;
   List<String> containers = ["沪深", "自选"];
@@ -33,31 +34,26 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
   double screenwidth;
   List<TextStyle> ts = [TextStyle()];
   Future _future;
-  Timer timer_;
+  Timer timer_s;
   @override
   void initState() {
     super.initState();
-
-
-
     _future = getRankList();
     bool is_trade = Util().checkStockTradeTime();
-    if(is_trade){
-      timer_ = Timer.periodic(Duration(seconds: 5,), (t){
-        try{
+      if(is_trade){
+        timer_s = Timer.periodic(Duration(seconds: 5,), (t){
           getRankList();
-        }catch(Exception){
-        }
-      });
-    }
-
+        });
+      }
   }
   @override
   void dispose() {
-
-    timer_.cancel();
-
+    if(timer_s != null){
+      timer_s.cancel();
+    }
+    super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -224,36 +220,36 @@ class _ChildItemView extends State<ChildItemView> with AutomaticKeepAliveClientM
     return table_list;
   }
   Future getRankList() async {
-    try{
      ResultData res = await HttpManager.getInstance().get("stock/get_my_optional",withLoading: false);
-      Map dat1 = res.data["data1"];
-      List list = dat1["showapi_res_body"]["list"];
-      setState(() {
-          rank_list = list;
-          table_list.add(Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: screenwidth,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("名称代码"),
-                      Text("最新价格"),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Text("涨跌幅"),
-                ),
-              ],
-            ),
-          ));
-      });
-    }catch(e){
-      print(e);
-    }
+     if(res.data != null){
+       Map dat1 = res.data["data1"];
+       List list = dat1["showapi_res_body"]["list"];
+       setState(() {
+         rank_list = list;
+         table_list.add(Container(
+           child: Row(
+             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             children: <Widget>[
+               Container(
+                 width: screenwidth,
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   children: <Widget>[
+                     Text("名称代码"),
+                     Text("最新价格"),
+                   ],
+                 ),
+               ),
+               Container(
+                 child: Text("涨跌幅"),
+               ),
+             ],
+           ),
+         ));
+       });
+     }else{
+       timer_s.cancel();
+     }
   }
 
 
