@@ -47,7 +47,7 @@ class _trade extends State<trade> {
   Color default_color = Colors.black;
   String search_code;
   String market_price;
-  double input_price;
+  String input_price;
   String number = "0";
   double screenwidth;
   int cur_index = 0;
@@ -456,7 +456,7 @@ List stock_list;
                                     setState(() {
                                       if(e == '2'){
                                         cur_price = double.parse(default_price);
-                                        input_price = double.parse(default_price);
+                                        input_price = default_price;
                                         market_price = '市价';
                                         is_readOnly = true;
                                         if(my_heyue.length>0){
@@ -466,7 +466,7 @@ List stock_list;
                                       }else{
                                         market_price = default_price;
                                         cur_price = double.parse(market_price);
-                                        input_price = double.parse(market_price);
+                                        input_price = market_price;
                                         trade_amount = double.parse(number)*cur_price;
                                         is_readOnly = false;
                                       }
@@ -495,6 +495,7 @@ List stock_list;
                                                 MyNumberTextInputFormatter(digit: 3)
                                               ],
                                               onChanged:(e){
+
                                                 if(my_heyue.length>0){
 
                                                   setState(() {
@@ -506,7 +507,7 @@ List stock_list;
                                                 setState(() {
                                                   market_price = e;
                                                   cur_price = double.parse(market_price);
-                                                  input_price = double.parse(market_price);
+                                                  input_price = e;
                                                 });
                                               },
                                               controller: TextEditingController
@@ -571,7 +572,7 @@ List stock_list;
                                                       market_price = (double.parse(market_price)-0.01).toStringAsFixed(2);
 
                                                       cur_price = double.parse(market_price);
-                                                      input_price = double.parse(market_price);
+                                                      input_price = market_price;
 
                                                       if(my_heyue.length>0){
                                                         if(cur_page ==0){
@@ -596,7 +597,7 @@ List stock_list;
                                                     if(market_price != null && double.parse(market_price) > 0){
                                                       market_price = (double.parse(market_price)+0.01).toStringAsFixed(2);
                                                       cur_price = double.parse(market_price);
-                                                      input_price = double.parse(market_price);
+                                                      input_price = market_price;
                                                       if(my_heyue.length>0){
                                                         if(cur_page ==0){
                                                           max_buy_stock_num = my_heyue[int.parse(default_heyue)]["total_capital"]/cur_price;
@@ -879,7 +880,7 @@ List stock_list;
                                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                               children: <Widget>[
                                                                 Text("价格"),
-                                                                Text(input_price!=null?input_price.toString():cur_price.toString(),style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red)),
+                                                                Text(input_price!=null?input_price:cur_price.toString(),style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red)),
                                                               ],
                                                             ),
                                                             Row(
@@ -942,7 +943,7 @@ List stock_list;
                                                                   if(input_price == null){
                                                                    buy_price = cur_price;
                                                                   }else{
-                                                                   buy_price = input_price;
+                                                                   buy_price = double.parse(input_price);
                                                                   }
 
                                                                   int trade_direction = cur_page==0?1:2;
@@ -1080,7 +1081,7 @@ List stock_list;
                                                         setState(() {
                                                           market_price = wudang[e]["price"];
                                                           cur_price = double.parse(wudang[e]["price"]);
-                                                          input_price = double.parse(wudang[e]["price"]);
+                                                          input_price = wudang[e]["price"];
                                                         });
                                                       }
                                                     },

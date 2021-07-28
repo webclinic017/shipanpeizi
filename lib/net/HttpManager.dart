@@ -64,8 +64,7 @@ class HttpManager {
     Response response;
     try {
       var token = await TokenStore().getToken("token");
-
-        _dio.options.headers = {'flag':'frontend','Authorization':token};
+      _dio.options.headers = {'flag':'frontend','Authorization':token};
 
       response = await _dio.get(api, queryParameters: params);
       if (withLoading) {

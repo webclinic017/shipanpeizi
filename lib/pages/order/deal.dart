@@ -99,6 +99,11 @@ f.whenComplete(() => null);
                   width: ScreenUtil().setWidth(150),
                   child: Text("盈亏"),
                 ),
+                Container(
+                  alignment: Alignment.center,
+                  width: ScreenUtil().setWidth(120),
+                  child: Text("卖出价"),
+                ),
 
               ],
             ),
@@ -167,6 +172,16 @@ f.whenComplete(() => null);
                     children: <Widget>[
                       Text(NumUtil.getNumByValueDouble(double.parse(order_list[e]["profit"].toString()),2).toString(),style: TextStyle(color: cur_color),),
                       //Text(NumUtil.getNumByValueDouble(NumUtil.multiply(order_list[e]["profit_rate"], 100), 3).toString()+"%" ,style: TextStyle(color: cur_color)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  width: ScreenUtil().setWidth(120),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(order_list[e]["sell_price"].toString(),style: TextStyle(color: cur_color),),
                     ],
                   ),
                 ),
