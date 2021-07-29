@@ -1,7 +1,7 @@
 class Util{
   Util();
   bool checkStockTradeTime(){
-
+return true;
     if(DateTime.now().weekday == 0 || DateTime.now().weekday == 6){
       return false;
     }

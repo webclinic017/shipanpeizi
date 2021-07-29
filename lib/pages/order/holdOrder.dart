@@ -89,7 +89,8 @@ class _holdOrder extends State<holdOrder>{
   onData(event){
     if(event != "ping"){
       Map map = jsonDecode(event);
-        List s = [];
+      print(map);
+      List s = [];
 
       map.forEach((key, value) {
         int i =0;

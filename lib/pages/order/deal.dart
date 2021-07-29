@@ -91,18 +91,23 @@ f.whenComplete(() => null);
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.only(left: 10),
-                  width: ScreenUtil().setWidth(120),
+                  width: ScreenUtil().setWidth(100),
                   child: Text("名称"),
                 ),
                 Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(150),
+                  width: ScreenUtil().setWidth(100),
                   child: Text("盈亏"),
                 ),
                 Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(120),
+                  width: ScreenUtil().setWidth(100),
                   child: Text("卖出价"),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: ScreenUtil().setWidth(100),
+                  child: Text("数量"),
                 ),
 
               ],
@@ -156,7 +161,7 @@ f.whenComplete(() => null);
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.only(left: 10),
-                  width: ScreenUtil().setWidth(120),
+                  width: ScreenUtil().setWidth(100),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -166,7 +171,7 @@ f.whenComplete(() => null);
                 ),
                 Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(150),
+                  width: ScreenUtil().setWidth(100),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -176,8 +181,8 @@ f.whenComplete(() => null);
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 10),
-                  width: ScreenUtil().setWidth(120),
+                  alignment: Alignment.center,
+                  width: ScreenUtil().setWidth(100),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -185,7 +190,16 @@ f.whenComplete(() => null);
                     ],
                   ),
                 ),
-
+                Container(
+                  alignment: Alignment.center,
+                  width: ScreenUtil().setWidth(100),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(order_list[e]["sell_hand"].toString(),style: TextStyle(color: cur_color),),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

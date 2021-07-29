@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutterapp2/pages/withdraw.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
 import 'package:flutterapp2/utils/Toast.dart';
+import 'package:package_info/package_info.dart';
 import 'fund/fund.dart';
 import 'heyue.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,7 +28,7 @@ class Mine extends StatefulWidget {
 
 class _Mine extends State<Mine>{
   final SystemUiOverlayStyle _style =SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-
+  String version = "";
   Map user_info = new Map();
   Map user_message_cate = {
     "account": "0",
@@ -37,7 +38,12 @@ class _Mine extends State<Mine>{
   String kefu = '';
   Map lang = {"account": "余额", "validContract": "有效合约", "deposit": "保证金"};
   List list_cate = [{"name":"实名与银行卡","url":new editCard()}, {"name":"修改密码","url":new editPassword()}, {"name":"用户协议","url":new agree()}, {"name":"退出登录","url":new stock("333")}];
-
+  getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      version = packageInfo.version;
+    });
+  }
   @override
   void initState() {
 
@@ -46,6 +52,7 @@ class _Mine extends State<Mine>{
     user_info["userName"] = "";
     getMemberInfo();
     getConfig();
+    getVersion();
   }
   getConfig()async{
     ResultData res = await HttpManager.getInstance().get("getConfig",withLoading: false);
@@ -259,6 +266,20 @@ class _Mine extends State<Mine>{
           Container(
 
             child: Column(children: getCate()),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+           alignment: Alignment.center,
+            child: Wrap(
+
+              spacing: 11,
+              crossAxisAlignment:WrapCrossAlignment.center,
+              children: <Widget>[
+                Text("当前版本:",style: TextStyle(color: Colors.grey,fontSize: 12),),
+                Text("v"+version,style: TextStyle(color: Colors.grey,fontSize: 12)),
+
+              ],
+            ),
           ),
           Container(
             height: 100,

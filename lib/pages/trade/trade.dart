@@ -488,11 +488,11 @@ List stock_list;
                                           /// 设置外边距
 
                                           child: TextField(
-                                              keyboardType: TextInputType.number,
+
                                               readOnly: is_readOnly,
                                               inputFormatters: [
                                                 //限制小数位数
-                                                MyNumberTextInputFormatter(digit: 3)
+                                                WhitelistingTextInputFormatter(RegExp("[0-9.]"))
                                               ],
                                               onChanged:(e){
 
