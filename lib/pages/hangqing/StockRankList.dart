@@ -228,7 +228,7 @@ class _StockRankList extends State<StockRankList>{
               child: InkWell(
                 splashColor: Colors.black26,
                 onTap:() {
-
+                  print(element["code"]);
                   JumpAnimation().jump(stock(element["code"].toString()), context);
                 },
                 child: Row(

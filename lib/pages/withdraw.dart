@@ -25,19 +25,6 @@ class withdraw_ extends State<withdraw>{
   bool have_card = false;
   FocusNode _commentFocus = FocusNode();
 
-  @override
-  void deactivate() {
-
-
-
-
-
-      print(3);
-
-
-
-  }
-
 
   @override
   void initState() {
@@ -271,7 +258,7 @@ class withdraw_ extends State<withdraw>{
                           });
                         },
                         child: Text("全部提现",style: TextStyle(color: Color(0xff7cb3fc)),),
-                      )
+                      ),
                     ],
                   ),
                 )
@@ -309,6 +296,14 @@ class withdraw_ extends State<withdraw>{
               },
               child: Text("立即提现"),
             ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left:10),
+            child: Text("注意事项:"),
+          ),
+          Container(
+            margin: EdgeInsets.only(left:20),
+            child: Text("1.提现手续费每笔3元"),
           ),
         ],
       ),

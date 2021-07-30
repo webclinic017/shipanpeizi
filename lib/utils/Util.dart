@@ -1,7 +1,7 @@
 class Util{
   Util();
   bool checkStockTradeTime(){
-return true;
+
     if(DateTime.now().weekday == 0 || DateTime.now().weekday == 6){
       return false;
     }
@@ -12,7 +12,7 @@ return true;
     if((((DateTime.now().hour) == 11 && DateTime.now().minute > 30) || (DateTime.now().hour) > 11) && (DateTime.now().hour) < 13){
       return false;
     }
-    if((DateTime.now().hour) >= 15){
+    if((DateTime.now().hour) > 14){
       return false;
     }
     return true;

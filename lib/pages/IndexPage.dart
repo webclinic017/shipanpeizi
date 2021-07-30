@@ -136,7 +136,7 @@ class _IndexPage extends State<IndexPage>{
         ),
 
         Text(
-          '盈利额(万)',
+          '盈利额',
           style: TextStyle(
               color: Color(0xff959ca7),
               fontWeight: FontWeight.w100),
@@ -151,7 +151,7 @@ class _IndexPage extends State<IndexPage>{
     if(list != null)
     list.forEach((element) {
       Color cur_color = Colors.black;
-     double rate = NumUtil.divide(element["profit"], element["deposit"]);
+     double rate = element["profit_rate"];
      rate = NumUtil.getNumByValueDouble(rate, 2);
      rate = rate * 100;
      if(rate >0){
@@ -180,7 +180,7 @@ class _IndexPage extends State<IndexPage>{
             ),
             Container(
               margin: EdgeInsets.only(top: 10),
-              child: Text(NumUtil.getNumByValueDouble(element["profit"], 2).toString(),
+              child: Text(NumUtil.getNumByValueDouble(element["profit_"], 2).toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18)),

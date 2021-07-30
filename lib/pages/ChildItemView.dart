@@ -161,7 +161,7 @@ class _ChildItemView extends State<ChildItemView>{
                 splashColor: Colors.black26,
                 onTap:() {
 
-                  JumpAnimation().jump(stock(element["market"]+element["code"].toString()), context);
+                  JumpAnimation().jump(stock(element["code"].toString()), context);
                 },
                 child: Row(
 
