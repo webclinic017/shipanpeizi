@@ -102,9 +102,9 @@ class editCard_ extends State<editCard> {
         .get("member/findUserBank", withLoading: false);
     if (result.data != null) {
       setState(() {
-        _controller.text = result.data["bank_user"];
+        _controller.text = result.data["bank_name"];
         _controller2.text = result.data["bank_branch"];
-        _controller3.text = result.data["bank_name"];
+
         phoneData["value"] = result.data["bank_phone"];
         realName["value"] = result.data["bank_user"];
 
@@ -166,21 +166,63 @@ class editCard_ extends State<editCard> {
                 ),
 
 
-                IconInput(
-                  data: bankName,
-                  callBack: (value) {
-                    setState(() {
-                      bankName["value"] = value;
-                    });
-                  },
+                Container(
+                  height: ScreenUtil().setHeight(50),
+                  margin: EdgeInsets.only(left: 5, top: 15, right: 5),
+
+                  child: Row(
+                    children: <Widget>[
+
+                      Expanded(
+                        child: TextField(
+                          onChanged: (e) {
+                            setState(() {
+                              bankName["value"] = e;
+                            });
+
+                          },
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(fontSize: ScreenUtil().setSp(13)),
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 10),
+                            hintText:"请输入银行名称",
+                            prefixIcon: Icon(Icons.account_balance),
+
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                IconInput(
-                  data: branchName,
-                  callBack: (value) {
-                    setState(() {
-                      branchName["value"] = value;
-                    });
-                  },
+                Container(
+                  height: ScreenUtil().setHeight(50),
+                  margin: EdgeInsets.only(left: 5, top: 15, right: 5),
+
+                  child: Row(
+                    children: <Widget>[
+
+                      Expanded(
+                        child: TextField(
+                          onChanged: (e) {
+                            setState(() {
+                              branchName["value"] = e;
+                            });
+
+                          },
+                          controller: _controller2,
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(fontSize: ScreenUtil().setSp(13)),
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 10),
+                            hintText:"请输入开户行名称",
+                            prefixIcon: Icon(Icons.local_library),
+
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 IconInput(
                   data: bankCard,
