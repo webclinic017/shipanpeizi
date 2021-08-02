@@ -104,6 +104,7 @@ class editCard_ extends State<editCard> {
       setState(() {
         _controller.text = result.data["bank_name"];
         _controller2.text = result.data["bank_branch"];
+        _controller3.text = result.data["bank_user"];
 
         phoneData["value"] = result.data["bank_phone"];
         realName["value"] = result.data["bank_user"];
@@ -148,13 +149,33 @@ class editCard_ extends State<editCard> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                IconInput(
-                  data: realName,
-                  callBack: (value) {
-                    setState(() {
-                      realName["value"] = value;
-                    });
-                  },
+                Container(
+                  height: ScreenUtil().setHeight(50),
+                  margin: EdgeInsets.only(left: 5, top: 15, right: 5),
+
+                  child: Row(
+                    children: <Widget>[
+
+                      Expanded(
+                        child: TextField(
+                          onChanged: (e) {
+                            setState(() {
+                              realName["value"] = e;
+                            });
+
+                          },
+                          controller: _controller3,
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(fontSize: ScreenUtil().setSp(13)),
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 10),
+                            hintText:"请输入真实姓名",
+                            prefixIcon: Icon(Icons.person),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 IconInput(
                   data: phoneData,
