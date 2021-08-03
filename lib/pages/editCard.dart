@@ -236,7 +236,7 @@ class editCard_ extends State<editCard> {
                             hintStyle: TextStyle(fontSize: ScreenUtil().setSp(13)),
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.only(left: 10),
-                            hintText:"请输入开户行名称",
+                            hintText:"请输入支行名称",
                             prefixIcon: Icon(Icons.local_library),
 
                           ),

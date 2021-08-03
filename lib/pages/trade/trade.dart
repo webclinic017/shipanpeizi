@@ -1219,15 +1219,12 @@ List stock_list;
                       height: ScreenUtil().setHeight(260),
                       child: Column(
                         children: <Widget>[
-                          order(key: childKey,data: my_heyue,f: (e,c){
+                          order(code:widget.stock_code,key: childKey,data: my_heyue,f: (e,c){
                             setState(() {
-
                               if(widget.stock_code == "null"){
-                                if(widget.stock_code != e){
                                   widget.stock_code = e;
-                                  getTradeData();
-                                }
 
+                                  getTradeData();
                               }
                               can_sell = c;
                             });
@@ -1389,6 +1386,7 @@ List stock_list;
            is_search = false;
          });
          getTradeData();
+         sunKey.currentState.getOrderList(my_heyue[int.parse(default_heyue)]["id"]);
       },child: Container(
 
         padding: EdgeInsets.only(top: 5,bottom: 5),

@@ -18,11 +18,13 @@ class order extends StatefulWidget{
 
 Function f;
 Function d;
+String code;
   order({
     Key key,
     this.data,
     this.f,
-    this.d
+    this.d,
+    this.code
   }) : super(key: key);
   @override
   _order createState() => _order();
@@ -135,7 +137,7 @@ class _order extends State<order>{
               controller: controller,
               onPageChanged: onPageChanged,
               children: <Widget>[
-                widget.data.length>0? holdOrder(heyue_id: widget.data[index]["id"],key: sunKey,b: widget.f,d:widget.d):Container(),
+                widget.data.length>0? holdOrder(code:widget.code,heyue_id: widget.data[index]["id"],key: sunKey,b: widget.f,d:widget.d):Container(),
                 widget.data.length>0? deal(heyue_id: widget.data[index]["id"],key: dealKey,b: widget.f,d:widget.d):Container(),
                 widget.data.length>0? entrust(heyue_id: widget.data[index]["id"],key: entrustKey,b: widget.f,d:widget.d):Container(),
                 widget.data.length>0? canceled(heyue_id: widget.data[index]["id"],key: canceledKey,b: widget.f,d:widget.d):Container(),

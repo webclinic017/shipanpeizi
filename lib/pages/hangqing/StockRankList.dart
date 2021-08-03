@@ -34,9 +34,7 @@ class _StockRankList extends State<StockRankList>{
   @override
   void initState() {
     super.initState();
-
     getDaPanData();
-
     _future = getRankList();
     dapan_data = [
       {
@@ -116,7 +114,7 @@ class _StockRankList extends State<StockRankList>{
                           child: Wrap(
                             alignment: WrapAlignment.spaceAround,
                             direction: Axis.horizontal,
-                            children: getDaPanList(),
+                            children: (dapan_data !=null && dapan_data.length>0) ? getDaPanList():[],
                           ),
                         ),
                   Container(
@@ -127,7 +125,7 @@ class _StockRankList extends State<StockRankList>{
                     padding: EdgeInsets.only(left: 15,right: 15),
                     child: Wrap(
 
-                      children: getTableRowList(),
+                      children: rank_list != null && rank_list.length>0? getTableRowList():[],
                     ),
                   )
                       ],
@@ -161,6 +159,7 @@ class _StockRankList extends State<StockRankList>{
   }
 
   List getDaPanList() {
+
     return dapan_data.asMap().keys.map((e) {
       return Card(
           shadowColor: Colors.black,
@@ -336,27 +335,31 @@ class _StockRankList extends State<StockRankList>{
       Map parseJson = json.decode(result);
       Map data = json.decode(parseJson["data"]["data"]);
       List list = data["showapi_res_body"]["indexList"];
-      int i = 0;
-      list.forEach((element) {
-        setState(() {
-          if (double.parse(element["diff_rate"]) > 0.00) {
-            dapan_data[i]["color"] = Color(0xffE63A3C);
-            dapan_data[i]["diff"] = "+" + element["diff_rate"] + "%";
-            dapan_data[i]["diff_money"] = "+" + element["diff_money"];
-            dapan_data[i]["bg_color"] = Color(0xfffaf0f0);
-          } else {
-            dapan_data[i]["color"] = Color(0xff09B971);
-            dapan_data[i]["diff"] = element["diff_rate"] + "%";
-            dapan_data[i]["diff_money"] = element["diff_money"];
-            dapan_data[i]["bg_color"] = Color(0xffe1fae5);
-          }
-          dapan_data[i]["price"] = element["nowPrice"];
-        });
-        if (i > 2) {
-          return;
+      if(list != null){
+        if(list.length>0){
+          int i = 0;
+          list.forEach((element) {
+            setState(() {
+              if (double.parse(element["diff_rate"]) > 0.00) {
+                dapan_data[i]["color"] = Color(0xffE63A3C);
+                dapan_data[i]["diff"] = "+" + element["diff_rate"] + "%";
+                dapan_data[i]["diff_money"] = "+" + element["diff_money"];
+                dapan_data[i]["bg_color"] = Color(0xfffaf0f0);
+              } else {
+                dapan_data[i]["color"] = Color(0xff09B971);
+                dapan_data[i]["diff"] = element["diff_rate"] + "%";
+                dapan_data[i]["diff_money"] = element["diff_money"];
+                dapan_data[i]["bg_color"] = Color(0xffe1fae5);
+              }
+              dapan_data[i]["price"] = element["nowPrice"];
+            });
+            if (i > 2) {
+              return;
+            }
+            i++;
+          });
         }
-        i++;
-      });
+      }
     } catch (e) {
       print(e);
     }

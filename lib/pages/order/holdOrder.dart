@@ -23,13 +23,13 @@ class holdOrder extends StatefulWidget{
 
 Function b;
 Function d;
-
-
+String code;
   holdOrder({
     Key key,
     this.heyue_id,
     this.b,
     this.d,
+    this.code
   }) : super(key: key);
   int heyue_id;
   bool is_out = false;
@@ -116,7 +116,8 @@ class _holdOrder extends State<holdOrder>{
 
     ResultData result = await HttpManager.getInstance().get("frontend/order/findOrderByCase",params:{"stock_status":2,"heyue_id":i,"page":page.toString(),"sort":"-id","limit":"5","cancel_status":0},withLoading: false);
     List s = result.data;
-     setState(() {
+
+    setState(() {
        if(page == 1){
          order_list = s;
        }else{
@@ -127,8 +128,26 @@ class _holdOrder extends State<holdOrder>{
          }
        }
      });
+    int can_sell =0;
      if(order_list.length>0){
-      widget.b(order_list[0]["stock_code"],order_list[0]["can_sell"]);
+     can_sell = order_list[0]["can_sell"];
+     }
+
+
+    if(widget.code != "null"){
+      if(s != null){
+        if(s.length>0){
+          s.forEach((element) {
+            if(element["stock_code"] == widget.code){
+              can_sell = element["can_sell"];
+            }
+          });
+        }
+      }
+     }
+
+     if(order_list.length>0){
+      widget.b(order_list[0]["stock_code"],can_sell);
      }else{
        widget.b('sh600000',0);
      }

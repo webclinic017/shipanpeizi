@@ -22,6 +22,7 @@ import 'package:flutterapp2/utils/Rute.dart';
 import 'package:flutterapp2/utils/Toast.dart';
 import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
+import 'package:marquee_flutter/marquee_flutter.dart';
 
 import '../main.dart';
 import 'Mine.dart';
@@ -37,6 +38,7 @@ class IndexPage extends StatefulWidget {
 }
 
 class _IndexPage extends State<IndexPage>{
+  String gonggao = "";
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -44,6 +46,7 @@ class _IndexPage extends State<IndexPage>{
     controller = new PageController(initialPage: this.page);
     bool is_trade = Util().checkStockTradeTime();
     getRankList();
+    getConfig();
     if(is_trade){
       timer_ = Timer.periodic(Duration(seconds: 5), (t){
         try{
@@ -52,6 +55,21 @@ class _IndexPage extends State<IndexPage>{
         }
       });
     }
+  }
+  getConfig()async{
+    ResultData res = await HttpManager.getInstance().get("getConfig",withLoading: false);
+    List s = res.data;
+    setState(() {
+      s.forEach((element) {
+
+        if(element["en_name"] == "gonggao"){
+          setState(() {
+            gonggao = element["value"];
+          });
+        }
+
+      });
+    });
   }
   @override
   void dispose() {
@@ -395,6 +413,25 @@ class _IndexPage extends State<IndexPage>{
                                   ),
                                 ),
                               ),
+
+                              Row(
+
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.only(left: 3,right: 3),
+                                    child: Text("公告:"),
+                                  ),
+                                  Container(
+                                    width: 318,
+                                    height:30,
+                                    child: new MarqueeWidget(
+                                      text: gonggao,
+                                      textStyle: new TextStyle(fontSize: 15.0),
+                                      scrollAxis: Axis.horizontal,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               GestureDetector(
                                 onTap: (){
                                   JumpAnimation().jump(applyHeYue(), context);
@@ -405,6 +442,7 @@ class _IndexPage extends State<IndexPage>{
                                       fit: BoxFit.fill,
                                     )),
                               ),
+
                               Container(
                                 padding: EdgeInsets.all(7),
                                 child: Text(
