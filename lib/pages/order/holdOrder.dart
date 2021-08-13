@@ -89,7 +89,7 @@ class _holdOrder extends State<holdOrder>{
   onData(event){
     if(event != "ping"){
       Map map = jsonDecode(event);
-      print(map);
+
       List s = [];
 
       map.forEach((key, value) {
@@ -129,11 +129,6 @@ class _holdOrder extends State<holdOrder>{
        }
      });
     int can_sell =0;
-     if(order_list.length>0){
-     can_sell = order_list[0]["can_sell"];
-     }
-
-
     if(widget.code != "null"){
       if(s != null){
         if(s.length>0){
@@ -144,7 +139,11 @@ class _holdOrder extends State<holdOrder>{
           });
         }
       }
-     }
+     }else{
+      if(order_list.length>0){
+        can_sell = order_list[0]["can_sell"];
+      }
+    }
 
      if(order_list.length>0){
       widget.b(order_list[0]["stock_code"],can_sell);

@@ -124,7 +124,12 @@ List stock_list;
     super.dispose();
   }
   getTradeAmount(){
-        return (cur_price*double.parse(number)).toStringAsFixed(2);
+    if(input_price != null){
+      return (double.parse(input_price)*double.parse(number)).toStringAsFixed(2);
+
+    }else{
+      return "0";
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -274,7 +279,9 @@ List stock_list;
                                         onChanged:(e){
 
                                           setState(() async {
+
                                             setState(() {
+
                                               search_code = e;
                                             });
                                             if(e.length>=3){
@@ -1223,10 +1230,9 @@ List stock_list;
                             setState(() {
                               if(widget.stock_code == "null"){
                                   widget.stock_code = e;
-
                                   getTradeData();
                               }
-                              can_sell = c;
+                                can_sell = c;
                             });
                           },d: (code){
                             setState(() {

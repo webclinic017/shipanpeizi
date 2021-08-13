@@ -73,6 +73,11 @@ class fund_ extends State<fund>{
   }
   getCardList(){
     return data.asMap().keys.map((e){
+      String str = '余额';
+      List arr = [15,16,17,18,19,20,21];
+      if(arr.contains(data[e]["type"])){
+        str = "操盘余额";
+      }
       return Container(
         padding: EdgeInsets.only(top: 10,bottom: 10,left: 10,right: 10),
         child: Card(
@@ -97,7 +102,7 @@ class fund_ extends State<fund>{
                     Flexible(
                       child: Text("用途:  "+data[e]["mark"]),
                     ),
-                    Text("余额:  "+data[e]["after_amount"].toString()),
+                    Text(str+":  "+data[e]["after_amount"].toString()),
                   ],
                 )
               ],

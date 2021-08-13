@@ -153,6 +153,17 @@ class _HistoryContract extends State<HistoryContract> {
                                           ],
                                         ),
                                       ),
+                                      MySeparator(color: Colors.grey),
+                                      Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text("合约ID"),
+                                            Text(_list[index]['id'].toString()),
+                                          ],
+                                        ),
+                                      ),
                                   MySeparator(color: Colors.grey),
                                       Container(
                                         child: Row(
