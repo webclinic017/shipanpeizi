@@ -192,22 +192,9 @@ class _Mine extends State<Mine>{
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    user_info["userName"] != "测试" ?GestureDetector(
+                    GestureDetector(
                       onTap: () async {
                         JumpAnimation().jump(recharge(), context);
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(
-                            "img/recharge.png",
-                            width: 50,
-                          ),
-                          Text("充值")
-                        ],
-                      ),
-                    ):GestureDetector(
-                      onTap: () async {
-                        //JumpAnimation().jump(recharge(), context);
                       },
                       child: Column(
                         children: <Widget>[
