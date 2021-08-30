@@ -284,7 +284,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                         TipDioLog("总操盘资金","总操盘资金=保证金\+配资资金\n追加的保证金不计入总操盘资金",context).showDioLog();
                                                       },
                                                       child: Icon(
-                                                        IconData(0xe602, fontFamily: 'iconfont'),
+                                                        const IconData(0xe602, fontFamily: 'iconfont'),
                                                         size:18,
                                                       ),
                                                     )
@@ -344,7 +344,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                         TipDioLog("亏损预警线","亏损预警线=保证金×50.00%+配资资金",context).showDioLog();
                                                       },
                                                       child: Icon(
-                                                        IconData(0xe602, fontFamily: 'iconfont'),
+                                                        const IconData(0xe602, fontFamily: 'iconfont'),
                                                         size:18,
                                                       ),
                                                     )
@@ -370,7 +370,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                         TipDioLog("亏损平仓线","亏损平仓线=保证金×30.0%+配资资金",context).showDioLog();
                                                       },
                                                       child: Icon(
-                                                        IconData(0xe602, fontFamily: 'iconfont'),
+                                                        const IconData(0xe602, fontFamily: 'iconfont'),
                                                         size:18,
                                                       ),
                                                     )
@@ -396,7 +396,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                         TipDioLog("利息利率","按天、按周、按月的合约\n收取利息的利率是不一样的\n具体以显示为准\n\n交易日14:25之前申请的合约当日开始计息\n14.45之后与非交易日申请的合约下个交易日开始计息",context).showDioLog();
                                                       },
                                                       child: Icon(
-                                                        IconData(0xe602, fontFamily: 'iconfont'),
+                                                        const IconData(0xe602, fontFamily: 'iconfont'),
                                                         size:18,
                                                       ),
                                                     )
@@ -439,7 +439,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                         TipDioLog("资金使用时间","资金使用时间即操盘期限\n按天合约最多两天\n按月、按周最少一月、一周\n所有类型合约到期自动续期\n您也可以随时手动终止结算",context).showDioLog();
                                                       },
                                                       child: Icon(
-                                                        IconData(0xe602, fontFamily: 'iconfont'),
+                                                        const IconData(0xe602, fontFamily: 'iconfont'),
                                                         size:18,
                                                       ),
                                                     )
@@ -465,7 +465,7 @@ class applyHeYue_ extends State<applyHeYue>{
                                                         TipDioLog("准备资金","准备资金=保证金+利息×资金使用时间",context).showDioLog();
                                                       },
                                                       child: Icon(
-                                                        IconData(0xe602, fontFamily: 'iconfont'),
+                                                        const IconData(0xe602, fontFamily: 'iconfont'),
                                                         size:18,
                                                       ),
                                                     )

@@ -108,11 +108,10 @@ class _IndexPage extends State<IndexPage>{
   }
   Future getDaPanData() async {
     try {
-      String result;
-      result = await request().getDaPanData();
-      Map parseJson = json.decode(result);
-      Map data = json.decode(parseJson["data"]["data"]);
-      List list = data["showapi_res_body"]["indexList"];
+      ResultData res =await HttpManager.getInstance().get("stock/getDaPanData",withLoading: false);
+     Map d =  json.decode(res.data["data"]);
+
+      List list = d["showapi_res_body"]["indexList"];
       int i = 0;
       list.forEach((element) {
         setState(() {
@@ -205,7 +204,7 @@ class _IndexPage extends State<IndexPage>{
             ),
             Container(
               margin: EdgeInsets.only(top: 10),
-              child: Text(rate.toString()+"%",
+              child: Text(NumUtil.getNumByValueDouble(rate, 2).toString()+"%",
                   style: TextStyle(
                       color: cur_color,
                       fontWeight: FontWeight.bold,

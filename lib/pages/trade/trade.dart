@@ -1428,14 +1428,12 @@ List stock_list;
   Future getTradeData() async {
 
     if(widget.stock_code != "null"){
-        String result;
-        result = await request().send_get('/stock/getTradeData/'+widget.stock_code);
-        Map parseJson = json.decode(result);
-        Map dat1 = json.decode(parseJson["data"]["data"]);
-        Map dat2 = json.decode(parseJson["data"]["data1"]);
-        List list = dat1["showapi_res_body"]["list"];
-        Map map1 = list[0];
-        List list1 = dat2["showapi_res_body"]["list"];
+      ResultData dd = await HttpManager.getInstance().get("stock/getTradeData/"+widget.stock_code,withLoading: false);
+      Map s1 =  json.decode(dd.data["data"]);
+      Map s2 = json.decode(dd.data["data1"]);
+      List list = s1["showapi_res_body"]["list"];
+      Map map1 = list[0];
+      List list1 = s2["showapi_res_body"]["list"];
 
       setState(() {
           detail = list1;

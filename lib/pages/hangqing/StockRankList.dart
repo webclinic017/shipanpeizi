@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/material_header.dart';
+import 'package:flutterapp2/net/HttpManager.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
 import 'package:flutterapp2/utils/Util.dart';
 import 'package:flutterapp2/utils/request.dart';
-
+import 'package:flutterapp2/net/ResultData.dart';
 import '../stock.dart';
 
 class StockRankList extends StatefulWidget {
@@ -288,11 +289,14 @@ class _StockRankList extends State<StockRankList>{
   }
   Future getRankList() async {
     try{
-      String result;
-      result = await  request().send_get("/stock/getRankList/"+page_.toString());
-      Map parseJson = json.decode(result);
-      Map dat1 = json.decode(parseJson["data"]["data"]);
-      List list = dat1["showapi_res_body"]["data"]["list"];
+
+
+      ResultData result = await HttpManager.getInstance().get("stock/getRankList/"+page_.toString(),withLoading: false);
+
+      Map d =  json.decode(result.data["data"]);
+
+      List list = d["showapi_res_body"]["data"]["list"];
+
       setState(() {
         if(page_ == 1){
           rank_list = list;
@@ -330,11 +334,9 @@ class _StockRankList extends State<StockRankList>{
 
  Future getDaPanData() async {
     try {
-      String result;
-      result = await request().getDaPanData();
-      Map parseJson = json.decode(result);
-      Map data = json.decode(parseJson["data"]["data"]);
-      List list = data["showapi_res_body"]["indexList"];
+      ResultData res =await HttpManager.getInstance().get("stock/getDaPanData",withLoading: false);
+      Map d =  json.decode(res.data["data"]);
+      List list = d["showapi_res_body"]["indexList"];
       if(list != null){
         if(list.length>0){
           int i = 0;

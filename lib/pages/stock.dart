@@ -139,11 +139,10 @@ class _stock extends State<stock>{
   }
   //default_stock_flag
   getNowPrice()async{
-    String result;
-    result = await  request().getIPAddress("1",widget.stock_id.toString());
-   Map parseJson = json.decode(result);
-   Map data1 = json.decode(parseJson["data"]["data1"]);
-   Map map1 = data1["showapi_res_body"]["list"][0];
+    ResultData result = await HttpManager.getInstance().get("stock/getTimeSharingData/"+widget.stock_id,withLoading: false);
+
+    Map d =   json.decode(result.data["data1"]);
+    Map map1 = d["showapi_res_body"]["list"][0];
     setState(() {
     KLineEntity s = datas[datas.length-1];
     defalut_diff_money = map1["diff_money"];
@@ -179,15 +178,13 @@ class _stock extends State<stock>{
   Future getTradeData() async {
 
     try {
-      String result;
-      result = await request().send_get('/stock/getTradeData/'+widget.stock_id);
-      Map parseJson = json.decode(result);
-      Map dat1 = json.decode(parseJson["data"]["data"]);
-      Map dat2 = json.decode(parseJson["data"]["data1"]);
-      List list = dat1["showapi_res_body"]["list"];
-      Map map1 = list[0];
-      List list1 = dat2["showapi_res_body"]["list"];
 
+      ResultData dd = await HttpManager.getInstance().get("stock/getTradeData/"+widget.stock_id,withLoading: false);
+      Map s1 =  json.decode(dd.data["data"]);
+      Map s2 = json.decode(dd.data["data1"]);
+      List list = s1["showapi_res_body"]["list"];
+      Map map1 = list[0];
+      List list1 = s2["showapi_res_body"]["list"];
       setState(() {
         if(list1 != null){
           detail = list1;
@@ -695,26 +692,30 @@ class _stock extends State<stock>{
     }).toList();
   }
   void getData(String period,int e) async {
-    String result;
+    Map parseJson;
+    Map parseJson1;
+    Map data;
+      String url;
+    if(period == "1"){
+      url = "stock/getTimeSharingData/"+widget.stock_id;
 
-    try {
+    }else{
+      url = "stock/getKdata/"+period+"/"+widget.stock_id;
 
-      result = await  request().getIPAddress('$period',widget.stock_id.toString());
-    } catch (e) {
-      print(e);
-      result = await rootBundle.loadString('assets/kline.json');
-    } finally {
+    }
+    ResultData result = await HttpManager.getInstance().get(url,withLoading: false);
 
-      Map parseJson = json.decode(result);
-      Map data = json.decode(parseJson["data"]["data"]);
+    data =  json.decode(result.data["data"]);
+
 
       Map map1;
       List list;
       if(period == "1"){
         list = data["showapi_res_body"]["dataList"][0]["minuteList"];
-        Map data1 = json.decode(parseJson["data"]["data1"]);
+        Map data1 = json.decode(result.data["data1"]);
         map1 = data1["showapi_res_body"]["list"][0];
       }else{
+
         list = data["showapi_res_body"]["dataList"];
       }
 
@@ -842,7 +843,7 @@ class _stock extends State<stock>{
           cur_index = e;
         }
       });
-    }
+
   }
   checkStockTradeTime(){
 
