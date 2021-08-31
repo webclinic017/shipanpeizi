@@ -48,7 +48,6 @@ class applyHeYue_ extends State<applyHeYue>{
     getDeposit();
     _commentFocus = FocusNode();
     deposit = [
-      {"id":1,"value":"500","name":"五百"},
       {"id":2,"value":"1000","name":"1千"},
       {"id":3,"value":"2000","name":"2千"},
       {"id":4,"value":"3000","name":"3千"},

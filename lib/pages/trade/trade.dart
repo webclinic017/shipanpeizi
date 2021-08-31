@@ -17,6 +17,7 @@ import 'package:flutterapp2/pages/order/order.dart';
 import 'package:flutterapp2/pages/searchStock.dart';
 import 'package:flutterapp2/utils/EventDioLog.dart';
 import 'package:flutterapp2/utils/JumpAnimation.dart';
+import 'package:flutterapp2/utils/NumUtil.dart';
 import 'package:flutterapp2/utils/TipDioLog.dart';
 import 'package:flutterapp2/utils/Toast.dart';
 import 'package:flutterapp2/utils/Util.dart';
@@ -125,7 +126,7 @@ List stock_list;
   }
   getTradeAmount(){
     if(input_price != null){
-      return (double.parse(input_price)*double.parse(number)).toStringAsFixed(2);
+      return (double.parse(input_price)*NumUtil.getDoubleByValueStr(number)).toStringAsFixed(2);
 
     }else{
       return "0";
