@@ -152,17 +152,20 @@ class _IndexPage extends State<IndexPage>{
           ),
         ),
 
-        Text(
-          '盈利额',
-          style: TextStyle(
-              color: Color(0xff959ca7),
-              fontWeight: FontWeight.w100),
-        ),
-        Text(
-          '盈利率',
-          style: TextStyle(
-              color: Color(0xff959ca7),
-              fontWeight: FontWeight.w100),
+//        Text(
+//          '盈利额',
+//          style: TextStyle(
+//              color: Color(0xff959ca7),
+//              fontWeight: FontWeight.w100),
+//        ),
+        Container(
+          margin: EdgeInsets.only(left: 30),
+          child: Text(
+            '盈利率',
+            style: TextStyle(
+                color: Color(0xff959ca7),
+                fontWeight: FontWeight.w100),
+          ),
         ),
       ]));
     if(list != null)
@@ -195,15 +198,15 @@ class _IndexPage extends State<IndexPage>{
                     )),padding: EdgeInsets.only(bottom: 10),)
               ],
             ),
+//            Container(
+//              margin: EdgeInsets.only(top: 10),
+//              child: Text(NumUtil.getNumByValueDouble(element["profit_"], 2).toString(),
+//                  style: TextStyle(
+//                      fontWeight: FontWeight.bold,
+//                      fontSize: 18)),
+//            ),
             Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Text(NumUtil.getNumByValueDouble(element["profit_"], 2).toString(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18)),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: EdgeInsets.only(top: 10,left: 30),
               child: Text(NumUtil.getNumByValueDouble(rate, 2).toString()+"%",
                   style: TextStyle(
                       color: cur_color,
