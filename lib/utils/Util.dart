@@ -13,7 +13,6 @@ class Util{
       return false;
     }
     if((DateTime.now().hour) < 9 || ((DateTime.now().hour) == 9 && DateTime.now().minute < 30)){
-
       return false;
     }
     if((((DateTime.now().hour) == 11 && DateTime.now().minute > 30) || (DateTime.now().hour) > 11) && (DateTime.now().hour) < 13){

@@ -31,8 +31,7 @@ class ResponseInterceptors extends InterceptorsWrapper {
         }else if(code == 506 || code == 501){
 
               TokenStore().setToken("is_login", "0");
-
-
+              TokenStore().clearToken("token");
               Rute.navigatorKey.currentState.pushNamedAndRemoveUntil("/login",
               ModalRoute.withName("/"));
 
