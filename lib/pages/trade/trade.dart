@@ -35,6 +35,7 @@ class trade extends StatefulWidget {
 }
 
 class _trade extends State<trade> {
+  bool can_tap = true;
   String defalut_status = "未开盘";
   String defalut_date = "--";
   String default_stock_flag = "--";
@@ -785,7 +786,7 @@ List stock_list;
                                           divisions:100,
                                           inactiveColor: Colors.blue,
                                           value: this.slider,
-                                          max: cur_page==0? max_buy_stock_num:can_sell.toDouble(),
+                                          max: cur_page==0? max_buy_stock_num<=1?1:max_buy_stock_num:can_sell.toDouble(),
                                           min: 0.0,
                                           activeColor: Color(0xffffcc00),
                                           onChanged: (double val) {
@@ -818,7 +819,7 @@ List stock_list;
                                       color_list[cur_page]["text"],
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    onPressed: () {
+                                    onPressed: can_tap==true?() {
                                       if(is_disable == true){
                                         EventDioLog("确认","暂无合约，请先申请合约",context,(){Navigator.pop(context);JumpAnimation().jump(new applyHeYue(), context);}).showDioLog();
                                         return ;
@@ -943,7 +944,12 @@ List stock_list;
                                                                   style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red),
                                                                 ),
                                                                 onPressed: () async{
+                                                                  setState(() {
+
+                                                                    can_tap = false;
+                                                                  });
                                                                   Navigator.pop(contextx);
+
                                                                   int member_heyue_id = my_heyue[int.parse(default_heyue)]["id"];
                                                                   String stock_code = default_stock_flag+default_code;
                                                                   String stock_name = default_name;
@@ -981,6 +987,10 @@ List stock_list;
                                                                   }else{
                                                                     Toast.toast(context,msg: result.msg);
                                                                   }
+                                                                  setState(() {
+
+                                                                    can_tap = true;
+                                                                  });
                                                                 },
                                                               ),
                                                             ),
@@ -1008,7 +1018,7 @@ List stock_list;
                                             );
                                           }
                                       );
-                                    },
+                                    }:null,
                                   ),
                                 )
                               ],
